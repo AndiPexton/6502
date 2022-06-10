@@ -12,7 +12,7 @@
         BRK = 0x00, // IRQ vector @ $FFFE,$FFFF
         RTI = 0x40,
         NOP = 0xEA,
-        LDY_immediate = 0xA0,
+        
 
         //LDA
         LDA_immediate = 0xA9,
@@ -24,7 +24,19 @@
         LDA_indirect_X = 0xA1,
         LDA_indirect_Y = 0xB1,
 
+        //LDX
         LDX_immediate = 0xA2,
+        LDX_zeropage = 0xA6,
+        LDX_zeropage_Y = 0xB6,
+        LDX_absolute = 0xAE,
+        LDX_absolute_Y = 0xBE,
+
+        //LDY
+        LDY_immediate = 0xA0,
+        LDY_zeropage = 0xA4,
+        LDY_zeropage_X = 0xB4,
+        LDY_absolute = 0xAC,
+        LDY_absolute_X = 0xBC,
 
         //STA
         STA_absolute = 0x8D,
@@ -72,10 +84,23 @@
         BMI_relative = 0x30,
         // BPL
         BPL_relative = 0x10,
+        //BVC
+        BVC_relative = 0x50,
+        //BVS
+        BVS_relative = 0x70,
+
+        CLD = 0xD8,
         // Stack
         PHA = 0x48,
         PLA = 0x68,
         PHP = 0x08,
-        PLP = 0x28
+        PLP = 0x28,
+        //Transfer
+        TAX = 0xAA,
+        TAY = 0xA8,
+        TSX = 0xBA,
+        TXA = 0x8A,
+        TXS = 0x9A,
+        TYA = 0x98
     }
 }

@@ -80,10 +80,88 @@ public static class CpuFunctions
                 return Process_BRK(processorState);
             case "RTI":
                 return Process_RTI(processorState);
+            case "TAX":
+                return Process_TAX(processorState);
+            case "TAY":
+                return Process_TAY(processorState);
+            case "TSX":
+                return Process_TSX(processorState);
+            case "TXA":
+                return Process_TXA(processorState);
+            case "TXS":
+                return Process_TXS(processorState);
+            case "TYA":
+                return Process_TYA(processorState);
             case "NOP":
             default:
                 return processorState;
         }
+    }
+
+    private static I6502_Sate Process_TYA(I6502_Sate processorState)
+    {
+        var value = processorState.Y;
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = RegisterFunctions.IsNegative(value),
+            A = value
+        });
+    }
+
+    private static I6502_Sate Process_TXS(I6502_Sate processorState)
+    {
+        var value = processorState.X;
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = RegisterFunctions.IsNegative(value),
+            S = value
+        });
+    }
+
+    private static I6502_Sate Process_TXA(I6502_Sate processorState)
+    {
+        var value = processorState.X;
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = RegisterFunctions.IsNegative(value),
+            A = value
+        });
+    }
+
+    private static I6502_Sate Process_TSX(I6502_Sate processorState)
+    {
+        var value = processorState.S;
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = RegisterFunctions.IsNegative(value),
+            X = value
+        });
+    }
+
+    private static I6502_Sate Process_TAX(I6502_Sate processorState)
+    {
+        var value = processorState.A;
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = RegisterFunctions.IsNegative(value),
+            X = value
+           });
+    }
+
+    private static I6502_Sate Process_TAY(I6502_Sate processorState)
+    {
+        var value = processorState.A;
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = RegisterFunctions.IsNegative(value),
+            Y = value
+        });
     }
 
     private static I6502_Sate Process_RTI(I6502_Sate processorState)

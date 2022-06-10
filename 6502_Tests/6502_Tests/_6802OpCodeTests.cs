@@ -840,5 +840,141 @@ namespace _6502_Tests
             newState.Y.Should().Be(0xAD);
 
         }
+
+        [Fact]
+        public void Test_TAX()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.TAX,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.X.Should().Be(0xFF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_TAY()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.TAY,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+
+            newState.Y.Should().Be(0xFF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_TSX()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.TSX,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            
+            newState.X.Should().Be(0xFF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_TXA()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, 0xFF,
+                (byte)OpCode.TXA,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+
+            newState.A.Should().Be(0xFF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_TXS()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, 0xAF,
+                (byte)OpCode.TXS,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+
+            newState.S.Should().Be(0xAF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_TYA()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDY_immediate, 0xAF,
+                (byte)OpCode.TYA,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+
+            newState.A.Should().Be(0xAF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
     }
 }
