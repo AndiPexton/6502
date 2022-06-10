@@ -156,7 +156,7 @@ namespace _6502_Tests
         }
 
         [Fact]
-        public void Test_LDA_STA()
+        public void Test_STA()
         {
             SetupAddressSpaceAndResetVector();
 
@@ -166,6 +166,52 @@ namespace _6502_Tests
             {
                 (byte)OpCode.LDA_immediate, expected, 
                 (byte)OpCode.STA_absolute, (byte)0x80, (byte)0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            var result = AddressSpace.Read(To16BitAddress((byte)0x80, (byte)0x00), 1)[0];
+
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Test_STX()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            const byte expected = (byte)0xF0;
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, expected,
+                (byte)OpCode.STX_absolute, (byte)0x80, (byte)0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            var result = AddressSpace.Read(To16BitAddress((byte)0x80, (byte)0x00), 1)[0];
+
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Test_STY()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            const byte expected = (byte)0xF0;
+
+            byte[] code =
+            {
+                (byte)OpCode.LDY_immediate, expected,
+                (byte)OpCode.STY_absolute, (byte)0x80, (byte)0x00,
                 (byte)OpCode.KIL
             };
 

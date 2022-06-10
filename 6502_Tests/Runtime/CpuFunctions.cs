@@ -39,15 +39,19 @@ public static class CpuFunctions
         switch (opCodeAndAddressMode[0])
         {
             case "LDY":
-                return Process_LDY(processorState, address?? 0);
+                return Process_LDY(processorState, address ?? 0);
             case "LDA":
-                return Process_LDA(processorState, address?? 0);
+                return Process_LDA(processorState, address ?? 0);
             case "LDX":
-                return Process_LDX(processorState, address??0);
+                return Process_LDX(processorState, address ?? 0);
             case "STA":
-                return Process_STA(processorState, address??0);
+                return Process_STA(processorState, address ?? 0);
+            case "STX":
+                return Process_STX(processorState, address ?? 0);
+            case "STY":
+                return Process_STY(processorState, address ?? 0);
             case "ADC":
-                return Process_ADC(processorState, address??0);
+                return Process_ADC(processorState, address ?? 0);
             case "CLC":
                 return processorState.MergeWith(new { C = false });
             case "KIL":
@@ -61,11 +65,11 @@ public static class CpuFunctions
             case "PLP":
                 return Process_PLP(processorState);
             case "AND":
-                return Process_AND(processorState, address??0);
+                return Process_AND(processorState, address ?? 0);
             case "ASL":
                 return Process_ASL(processorState, address);
             case "BCC":
-                return Process_BCC(processorState, address??0);
+                return Process_BCC(processorState, address ?? 0);
             case "BCS":
                 return Process_BCS(processorState, address ?? 0);
             case "BEQ":
@@ -96,6 +100,18 @@ public static class CpuFunctions
             default:
                 return processorState;
         }
+    }
+
+    private static I6502_Sate Process_STY(I6502_Sate processorState, ushort address)
+    {
+        Address.WriteAt(address, new[] { processorState.Y });
+        return processorState;
+    }
+
+    private static I6502_Sate Process_STX(I6502_Sate processorState, ushort address)
+    {
+        Address.WriteAt(address, new[] { processorState.X });
+        return processorState;
     }
 
     private static I6502_Sate Process_TYA(I6502_Sate processorState)

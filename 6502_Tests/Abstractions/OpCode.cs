@@ -47,6 +47,18 @@
         STA_indirect_X = 0x81,
         STA_indirect_Y = 0x91,
 
+        //STX
+        STX_absolute = 0x8E,
+        STX_zeropage = 0x86,
+        STX_zeropage_Y = 0x96,
+
+        //STY
+        STY_absolute = 0x8C,
+        STY_zeropage = 0x84,
+        STY_zeropage_X = 0x94,
+
+
+
         CLC = 0x18,
         // ADC Add Memory to Accumulator with Carry
         ADC_absolute = 0x6D,
