@@ -113,6 +113,10 @@
         TSX = 0xBA,
         TXA = 0x8A,
         TXS = 0x9A,
-        TYA = 0x98
+        TYA = 0x98,
+
+        //BIT
+        BIT_zeropage = 0x24,
+        BIT_absolute = 0x2C,
     }
 }

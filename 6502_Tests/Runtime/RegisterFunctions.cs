@@ -18,6 +18,11 @@ public static class RegisterFunctions
         return (value1 & 128) == 128;
     }
 
+    public static bool OverflowSet(byte value1)
+    {
+        return (value1 & 64) == 64;
+    }
+
     public static byte ReadCarryFlag(this I6502_Sate processorState) => 
         processorState.C ? (byte)0x01 : (byte)0x00;
 

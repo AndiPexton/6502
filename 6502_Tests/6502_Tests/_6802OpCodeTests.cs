@@ -1022,5 +1022,52 @@ namespace _6502_Tests
             newState.N.Should().BeTrue();
             newState.C.Should().BeFalse();
         }
+
+
+        [Fact]
+        public void Test_BIT()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xAF,
+                (byte)OpCode.STA_zeropage_X, 0x01,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.BIT_zeropage, 0x01,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.Z.Should().BeTrue();
+            newState.N.Should().BeTrue();
+            newState.V.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_BIT_2()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xAF,
+                (byte)OpCode.STA_zeropage_X, 0x01,
+                (byte)OpCode.LDA_immediate, 0x01,
+                (byte)OpCode.BIT_absolute, 0x01, 0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.V.Should().BeFalse();
+        }
     }
 }

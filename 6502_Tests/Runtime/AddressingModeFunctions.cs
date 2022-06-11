@@ -81,7 +81,7 @@ public static class AddressingModeFunctions
             .IncrementProgramCounter());
 
     private static ushort ToFullAddress(this byte zeroPage) => 
-        new byte[] { 0x00b, zeroPage }.ToUshort();
+        new byte[] { zeroPage, 0x00 }.ToUshort();
 
     private static byte GetZeroPageAddressAndApplyOffset(this I6502_Sate processorState, string[] addressMode) =>
         processorState

@@ -96,10 +96,25 @@ public static class CpuFunctions
                 return Process_TXS(processorState);
             case "TYA":
                 return Process_TYA(processorState);
+            case "BIT":
+                return Process_BIT(processorState, address ?? 0);
             case "NOP":
             default:
                 return processorState;
         }
+    }
+
+    private static I6502_Sate Process_BIT(I6502_Sate processorState, ushort address)
+    {
+        var b = Address.Read(address, 1)[0];
+        var result = (byte)(b & processorState.A);
+       
+        return processorState.MergeWith(new
+        {
+            Z = result == 0,
+            N = RegisterFunctions.IsNegative(b),
+            V = RegisterFunctions.OverflowSet(b)
+        });
     }
 
     private static I6502_Sate Process_STY(I6502_Sate processorState, ushort address)
