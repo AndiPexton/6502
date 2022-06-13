@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Abstractions;
 using Dependency;
 using Shadow.Quack;
@@ -52,6 +53,8 @@ public static class CpuFunctions
                 return processorState.Process_STY(address ?? 0);
             case "ADC":
                 return Process_ADC(processorState, address ?? 0);
+            case "SBC":
+                return Process_SBC(processorState, address ?? 0);
             case "CLC":
                 return processorState.Process_CLC();
             case "KIL":
@@ -114,13 +117,68 @@ public static class CpuFunctions
                 return processorState.Process_CLI();
             case "CLV":
                 return processorState.Process_CLV();
+            case "JMP":
+                return processorState.Process_JMP(address ?? 0);
+            case "JSR":
+                return  Process_JSR(processorState, address ?? 0);
+            case "RTS":
+                return Process_RTS(processorState);
+            case "ROL":
+                return Process_ROL(processorState, address);
+            case "ROR":
+                return Process_ROR(processorState, address);
+
             case "NOP":
             default:
                 return processorState;
         }
     }
 
+    private static I6502_Sate Process_ROL(I6502_Sate processorState, ushort? address)
+    {
+        var value = address == null ? processorState.A : Address.Read(address.Value, 1)[0];
 
+        value = (byte)((byte)(value << 1) | (byte)(value >> 7));
+
+        if(address!=null) Address.WriteAt(address.Value, value);
+
+        return address == null
+            ? processorState.MergeWith(new
+            {
+                A = value
+            })
+            : processorState;
+    }
+
+    private static I6502_Sate Process_ROR(I6502_Sate processorState, ushort? address)
+    {
+        var value = address == null ? processorState.A : Address.Read(address.Value, 1)[0];
+
+        value = (byte)((byte)(value >> 1) | (byte)(value << 7));
+
+        if (address != null) Address.WriteAt(address.Value, value);
+
+        return address == null
+            ? processorState.MergeWith(new
+            {
+                A = value
+            })
+            : processorState;
+    }
+
+    private static I6502_Sate Process_RTS(I6502_Sate processorState)
+    {
+        (processorState, var highByte) = processorState.PullFromStack();
+        (processorState, var lowByte) = processorState.PullFromStack();
+        var address = BitConverter.ToUInt16(new[] { lowByte, highByte });
+        return processorState
+            .Process_JMP(address);
+    }
+
+    private static I6502_Sate Process_JSR(I6502_Sate processorState, ushort address) =>
+        processorState
+            .PushToStack(processorState.ProgramCounter)
+            .Process_JMP(address);
 
 
     private static I6502_Sate Process_BIT(I6502_Sate processorState, ushort address)
@@ -208,6 +266,11 @@ public static class CpuFunctions
     private static I6502_Sate Process_ADC(I6502_Sate processorState, ushort address)
     {
         var value1 = Address.Read(address, 1)[0];
+        return ProcessAdc(processorState, value1);
+    }
+
+    private static I6502_Sate ProcessAdc(I6502_Sate processorState, byte value1)
+    {
         var result = processorState.A + value1 + processorState.ReadCarryFlag();
 
         return processorState.MergeWith(new
@@ -218,6 +281,12 @@ public static class CpuFunctions
             Z = result == 0,
             N = ((byte)result).IsNegative()
         });
+    }
+
+    private static I6502_Sate Process_SBC(I6502_Sate processorState, ushort address)
+    {
+        var value1 = (byte)~Address.Read(address, 1)[0];
+        return ProcessAdc(processorState, value1);
     }
 
     public static I6502_Sate Empty6502ProcessorState() =>

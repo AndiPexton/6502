@@ -15,6 +15,11 @@ public static class StackFunctions
         return (processorState, Address.Read(processorState.GetCurrentStackAddress(), 1)[0]);
     }
 
+
+    public static I6502_Sate PushToStack(this I6502_Sate processorState, ushort value) =>
+        BitConverter.GetBytes(value)
+            .Aggregate(processorState, (current, b) => current.PushToStack(b));
+
     public static I6502_Sate PushToStack(this I6502_Sate processorState, byte value)
     {
         if (processorState.S == 0x00) throw new StackOverflowException();

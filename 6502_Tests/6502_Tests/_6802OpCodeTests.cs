@@ -267,8 +267,53 @@ namespace _6502_Tests
             newState.ReadCarryFlag().Should().Be(1);
         }
 
+        [Fact]
+        public void Test_SBC_Subtract()
+        {
+            SetupAddressSpaceAndResetVector();
 
+            byte[] code =
+            {
+               
+                (byte)OpCode.LDA_immediate, 0x02,
+                (byte)OpCode.STA_zeropage, (byte)0x80,
+                (byte)OpCode.LDA_immediate, 0x02,
+                (byte)OpCode.SEC,
+                (byte)OpCode.SBC_zeropage, (byte)0x80,
+                (byte)OpCode.KIL
+            };
 
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0);
+            newState.ReadCarryFlag().Should().Be(1);
+        }
+
+        [Fact]
+        public void Test_SBC_SubtractWithBorrow()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+
+                (byte)OpCode.LDA_immediate, 0x02,
+                (byte)OpCode.STA_zeropage, (byte)0x80,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.SEC,
+                (byte)OpCode.SBC_zeropage, (byte)0x80,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0xFE);
+            newState.ReadCarryFlag().Should().Be(0);
+        }
 
         [Fact]
         public void Test_ADC_AddWithCarry_Complex()
@@ -1274,5 +1319,171 @@ namespace _6502_Tests
             newState.D.Should().BeFalse();
         }
 
+        [Fact]
+        public void Test_JMP()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.JMP_absolute, 0x17, 0x11,
+                (byte)OpCode.KIL,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0x00);
+        }
+
+        [Fact]
+        public void Test_JSR()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.JSR_absolute, 0x17, 0x11,
+                (byte)OpCode.KIL,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.RTS
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0x00);
+        }
+
+
+        [Fact]
+        public void Test_ROL()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b00000001,
+                (byte)OpCode.ROL,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000010);
+        }
+
+        [Fact]
+        public void Test_ROL_Wrap()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b10000000,
+                (byte)OpCode.ROL,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000001);
+        }
+
+        [Fact]
+        public void Test_ROL_Wrap_2()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b10000000,
+                (byte)OpCode.ROL,
+                (byte)OpCode.ROL,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000010);
+        }
+
+
+
+        [Fact]
+        public void Test_ROL_AltMem()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b00000001,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.ROL_zeropage, 0x80,
+                (byte)OpCode.LDA_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000010);
+        }
+
+        [Fact]
+        public void Test_ROR_Wrap_2()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b00000001,
+                (byte)OpCode.ROR,
+                (byte)OpCode.ROR,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b01000000);
+        }
+
+
+
+        [Fact]
+        public void Test_ROR_AltMem()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b00000001,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.ROR_zeropage, 0x80,
+                (byte)OpCode.LDA_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b10000000);
+        }
     }
 }

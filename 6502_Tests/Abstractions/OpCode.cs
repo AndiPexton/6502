@@ -124,6 +124,36 @@
         CLC = 0x18,
         CLD = 0xD8,
         CLI = 0x58,
-        CLV = 0xB8
+        CLV = 0xB8,
+
+        //JUMP
+        JMP_absolute = 0x4C,
+        JMP_indirect = 0x6C,
+        JSR_absolute = 0x20,
+        RTS = 0x60,
+
+        // Subtract with Borrow
+        SBC_immediate = 0xE9,
+        SBC_zeropage = 0xE5,
+        SBC_zeropage_X = 0xF5,
+        SBC_absolute = 0xED,
+        SBC_absolute_x = 0xFD,
+        SBC_absolute_Y = 0xF9,
+        SBC_indirect_X = 0xE1,
+        SBC_indirect_Y = 0xF1,
+
+        //ROL
+        ROL = 0x2A,
+        ROL_zeropage = 0x26,
+        ROL_zeropage_X = 0x36,
+        ROL_absolute = 0x2E,
+        ROL_ABSOLUTE_x = 0X3E,
+
+        //ROR
+        ROR = 0x6A,
+        ROR_zeropage = 0x66,
+        ROR_zeropage_X = 0x76,
+        ROR_absolute = 0x6E,
+        ROR_ABSOLUTE_x = 0X7E
     }
 }
