@@ -39,17 +39,17 @@ public static class CpuFunctions
         switch (opCodeAndAddressMode[0])
         {
             case "LDY":
-                return Process_LDY(processorState, address ?? 0);
+                return processorState.Process_LDY(address ?? 0);
             case "LDA":
-                return Process_LDA(processorState, address ?? 0);
+                return processorState.Process_LDA(address ?? 0);
             case "LDX":
-                return Process_LDX(processorState, address ?? 0);
+                return processorState.Process_LDX(address ?? 0);
             case "STA":
-                return Process_STA(processorState, address ?? 0);
+                return processorState.Process_STA(address ?? 0);
             case "STX":
-                return Process_STX(processorState, address ?? 0);
+                return processorState.Process_STX(address ?? 0);
             case "STY":
-                return Process_STY(processorState, address ?? 0);
+                return processorState.Process_STY(address ?? 0);
             case "ADC":
                 return Process_ADC(processorState, address ?? 0);
             case "CLC":
@@ -57,47 +57,51 @@ public static class CpuFunctions
             case "KIL":
                 throw new ProcessorKillException();
             case "PHA":
-                return Process_PHA(processorState);
+                return processorState.Process_PHA();
             case "PLA":
-                return Process_PLA(processorState);
+                return processorState.Process_PLA();
             case "PHP":
-                return Process_PHP(processorState);
+                return processorState.Process_PHP();
             case "PLP":
-                return Process_PLP(processorState);
+                return processorState.Process_PLP();
             case "AND":
                 return Process_AND(processorState, address ?? 0);
             case "ASL":
                 return Process_ASL(processorState, address);
             case "BCC":
-                return Process_BCC(processorState, address ?? 0);
+                return processorState.Process_BCC(address ?? 0);
             case "BCS":
-                return Process_BCS(processorState, address ?? 0);
+                return processorState.Process_BCS(address ?? 0);
             case "BEQ":
-                return Process_BEQ(processorState, address ?? 0);
+                return processorState.Process_BEQ(address ?? 0);
             case "BNE":
-                return Process_BNE(processorState, address ?? 0);
+                return processorState.Process_BNE(address ?? 0);
             case "BMI":
-                return Process_BMI(processorState, address ?? 0);
+                return processorState.Process_BMI(address ?? 0);
             case "BPL":
-                return Process_BPL(processorState, address ?? 0);
+                return processorState.Process_BPL(address ?? 0);
             case "BRK":
                 return Process_BRK(processorState);
             case "RTI":
                 return Process_RTI(processorState);
             case "TAX":
-                return Process_TAX(processorState);
+                return processorState.Process_TAX();
             case "TAY":
-                return Process_TAY(processorState);
+                return processorState.Process_TAY();
             case "TSX":
-                return Process_TSX(processorState);
+                return processorState.Process_TSX();
             case "TXA":
-                return Process_TXA(processorState);
+                return processorState.Process_TXA();
             case "TXS":
-                return Process_TXS(processorState);
+                return processorState.Process_TXS();
             case "TYA":
-                return Process_TYA(processorState);
+                return processorState.Process_TYA();
             case "BIT":
                 return Process_BIT(processorState, address ?? 0);
+            case "BVC":
+                return processorState.Process_BVC(address ?? 0);
+            case "BVS":
+                return processorState.Process_BVS(address ?? 0);
             case "NOP":
             default:
                 return processorState;
@@ -114,84 +118,6 @@ public static class CpuFunctions
             Z = result == 0,
             N = RegisterFunctions.IsNegative(b),
             V = RegisterFunctions.OverflowSet(b)
-        });
-    }
-
-    private static I6502_Sate Process_STY(I6502_Sate processorState, ushort address)
-    {
-        Address.WriteAt(address, new[] { processorState.Y });
-        return processorState;
-    }
-
-    private static I6502_Sate Process_STX(I6502_Sate processorState, ushort address)
-    {
-        Address.WriteAt(address, new[] { processorState.X });
-        return processorState;
-    }
-
-    private static I6502_Sate Process_TYA(I6502_Sate processorState)
-    {
-        var value = processorState.Y;
-        return processorState.MergeWith(new
-        {
-            Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
-            A = value
-        });
-    }
-
-    private static I6502_Sate Process_TXS(I6502_Sate processorState)
-    {
-        var value = processorState.X;
-        return processorState.MergeWith(new
-        {
-            Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
-            S = value
-        });
-    }
-
-    private static I6502_Sate Process_TXA(I6502_Sate processorState)
-    {
-        var value = processorState.X;
-        return processorState.MergeWith(new
-        {
-            Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
-            A = value
-        });
-    }
-
-    private static I6502_Sate Process_TSX(I6502_Sate processorState)
-    {
-        var value = processorState.S;
-        return processorState.MergeWith(new
-        {
-            Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
-            X = value
-        });
-    }
-
-    private static I6502_Sate Process_TAX(I6502_Sate processorState)
-    {
-        var value = processorState.A;
-        return processorState.MergeWith(new
-        {
-            Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
-            X = value
-           });
-    }
-
-    private static I6502_Sate Process_TAY(I6502_Sate processorState)
-    {
-        var value = processorState.A;
-        return processorState.MergeWith(new
-        {
-            Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
-            Y = value
         });
     }
 
@@ -220,41 +146,6 @@ public static class CpuFunctions
                 });
     }
 
-    private static I6502_Sate Process_BPL(I6502_Sate processorState, ushort address) =>
-        !processorState.N
-            ? JumpToAddress(processorState, address)
-            : processorState;
-
-    private static I6502_Sate Process_BMI(I6502_Sate processorState, ushort address) =>
-        processorState.N
-        ? JumpToAddress(processorState, address)
-        : processorState;
-
-    private static I6502_Sate Process_BCS(I6502_Sate processorState, ushort address) =>
-        processorState.C
-        ? JumpToAddress(processorState, address)
-        : processorState;
-
-    private static I6502_Sate Process_BNE(I6502_Sate processorState, ushort address) =>
-        !processorState.Z
-            ? JumpToAddress(processorState, address)
-            : processorState;
-
-    private static I6502_Sate Process_BCC(I6502_Sate processorState, ushort address) =>
-        !processorState.C 
-            ? JumpToAddress(processorState, address) 
-            : processorState;
-
-    private static I6502_Sate Process_BEQ(I6502_Sate processorState, ushort address) =>
-        processorState.Z 
-            ? JumpToAddress(processorState, address) 
-            : processorState;
-
-    private static I6502_Sate JumpToAddress(I6502_Sate processorState, ushort address) =>
-        processorState.MergeWith(new
-        {
-            ProgramCounter = address
-        });
 
     private static I6502_Sate Process_ASL(I6502_Sate processorState, ushort? address)
     {
@@ -298,71 +189,6 @@ public static class CpuFunctions
         });
     }
 
-    private static I6502_Sate Process_PHP(I6502_Sate processorState)
-    {
-        return processorState.PushToStack(processorState.ReadStateRegister(true));
-    }
-    private static I6502_Sate Process_PLP(I6502_Sate processorState)
-    {
-        (processorState, var sr) = processorState.PullFromStack();
-        return processorState.WriteStateRegister(sr);
-    }
-
-
-    private static I6502_Sate Process_PLA(I6502_Sate processorState)
-    {
-        (processorState, var a) = processorState.PullFromStack();
-        return processorState.MergeWith(new
-        {
-            A = a,
-            Z = a == 0,
-            N = RegisterFunctions.IsNegative(a)
-        });
-    }
-
-    private static I6502_Sate Process_PHA(I6502_Sate processorState)
-    {
-        return processorState.PushToStack(processorState.A);
-    }
-
-    private static I6502_Sate Process_LDY(I6502_Sate processorState, ushort address)
-    {
-        var b = Address.Read(address, 1)[0];
-        return processorState.MergeWith(new 
-            { 
-                Y = b, 
-                Z = b == 0,
-                N = RegisterFunctions.IsNegative(b)
-            });
-    }
-
-    private static I6502_Sate Process_LDX(I6502_Sate processorState, ushort address)
-    {
-        var b = Address.Read(address, 1)[0];
-        return processorState.MergeWith(new
-        {
-            X = b,
-            Z = b == 0,
-            N = RegisterFunctions.IsNegative(b)
-        });
-    }
-
-    private static I6502_Sate Process_LDA(I6502_Sate processorState, ushort address)
-    {
-        var b = Address.Read(address, 1)[0];
-        return processorState.MergeWith(new
-        {
-            A = b,
-            Z = b == 0,
-            N = RegisterFunctions.IsNegative(b)
-        });
-    }
-
-    private static I6502_Sate Process_STA(I6502_Sate processorState, ushort address)
-    {
-        Address.WriteAt(address, new[] { processorState.A });
-        return processorState;
-    }
 
     private static I6502_Sate Process_ADC(I6502_Sate processorState, ushort address)
     {

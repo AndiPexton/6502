@@ -13,7 +13,7 @@ public static class RegisterFunctions
                     ProgramCounter = (ushort)(processorState.ProgramCounter + bytes)
                 });
 
-    public static bool IsNegative(byte value1)
+    public static bool IsNegative(this byte value1)
     {
         return (value1 & 128) == 128;
     }

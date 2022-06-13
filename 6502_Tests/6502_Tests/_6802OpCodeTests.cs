@@ -1069,5 +1069,96 @@ namespace _6502_Tests
             newState.N.Should().BeTrue();
             newState.V.Should().BeFalse();
         }
+
+
+        [Fact]
+        public void Test_BVC()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.BVC_relative, 0x01,
+                (byte)OpCode.KIL,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0x00);
+        }
+
+
+        [Fact]
+        public void Test_BVS()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x01,
+                (byte)OpCode.BIT_zeropage, 0x01,
+                (byte)OpCode.BVS_relative, 0x01,
+                (byte)OpCode.KIL,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0x00);
+        }
+
+        [Fact]
+        public void Test_BVC_Negative()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x01,
+                (byte)OpCode.BIT_zeropage, 0x01,
+                (byte)OpCode.BVC_relative, 0x01,
+                (byte)OpCode.KIL,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0xFF);
+        }
+
+        [Fact]
+        public void Test_BVS_Negative()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.BVS_relative, 0x01,
+                (byte)OpCode.KIL,
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0xFF);
+        }
+
     }
 }
