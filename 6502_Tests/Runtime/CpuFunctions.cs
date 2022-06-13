@@ -127,6 +127,8 @@ public static class CpuFunctions
                 return Process_ROL(processorState, address);
             case "ROR":
                 return Process_ROR(processorState, address);
+            case "LSR":
+                return Process_LSR(processorState, address);
 
             case "NOP":
             default:
@@ -155,6 +157,22 @@ public static class CpuFunctions
         var value = address == null ? processorState.A : Address.Read(address.Value, 1)[0];
 
         value = (byte)((byte)(value >> 1) | (byte)(value << 7));
+
+        if (address != null) Address.WriteAt(address.Value, value);
+
+        return address == null
+            ? processorState.MergeWith(new
+            {
+                A = value
+            })
+            : processorState;
+    }
+
+    private static I6502_Sate Process_LSR(I6502_Sate processorState, ushort? address)
+    {
+        var value = address == null ? processorState.A : Address.Read(address.Value, 1)[0];
+
+        value = (byte)(value >> 1);
 
         if (address != null) Address.WriteAt(address.Value, value);
 

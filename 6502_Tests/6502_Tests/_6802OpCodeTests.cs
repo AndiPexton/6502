@@ -1472,7 +1472,7 @@ namespace _6502_Tests
 
             byte[] code =
             {
-                (byte)OpCode.LDA_immediate, 0b00000001,
+                (byte)OpCode.LDA_immediate, 0b00000011,
                 (byte)OpCode.STA_zeropage, 0x80,
                 (byte)OpCode.ROR_zeropage, 0x80,
                 (byte)OpCode.LDA_zeropage, 0x80,
@@ -1483,7 +1483,51 @@ namespace _6502_Tests
 
             var newState = RunToEnd();
 
-            newState.A.Should().Be(0b10000000);
+            newState.A.Should().Be(0b10000001);
+        }
+
+
+        [Fact]
+        public void Test_LSR()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b00000010,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LSR_zeropage, 0x80,
+                (byte)OpCode.LDA_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000001);
+        }
+
+        [Fact]
+        public void Test_LSR_Alt()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b00000011,
+                (byte)OpCode.LDX_immediate, 0x01,
+                (byte)OpCode.STA_zeropage, 0x81,
+                (byte)OpCode.LSR_zeropage_X, 0x80,
+                (byte)OpCode.LDA_absolute_X, 0x80, 0x00,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000001);
         }
     }
 }

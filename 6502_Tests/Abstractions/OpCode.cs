@@ -154,6 +154,13 @@
         ROR_zeropage = 0x66,
         ROR_zeropage_X = 0x76,
         ROR_absolute = 0x6E,
-        ROR_ABSOLUTE_x = 0X7E
+        ROR_ABSOLUTE_x = 0X7E,
+
+        //LSR
+        LSR = 0x4A,
+        LSR_zeropage = 0x46,
+        LSR_zeropage_X = 0x56,
+        LSR_absolute = 0x4E,
+        LSR_ABSOLUTE_x = 0X5E
     }
 }
