@@ -1160,5 +1160,119 @@ namespace _6502_Tests
             newState.A.Should().Be(0xFF);
         }
 
+        [Fact]
+        public void Test_SEC()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.SEC,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.C.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_SED()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.SED,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.D.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_SEI()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.SEI,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.I.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_SEI_CLI()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.SEI,
+                (byte)OpCode.CLI,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.I.Should().BeFalse();
+        }
+
+
+        [Fact]
+        public void Test_CLV_Using_BIT_ToSet()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x01,
+                (byte)OpCode.BIT_absolute, 0x01, 0x00, //SETS V 
+                (byte)OpCode.CLV, // Clears V
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+            newState.V.Should().BeFalse();
+        }
+
+
+        [Fact]
+        public void Test_SED_CLD()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.SED,
+                (byte)OpCode.CLD,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.D.Should().BeFalse();
+        }
+
     }
 }

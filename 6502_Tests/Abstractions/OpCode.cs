@@ -58,8 +58,6 @@
         STY_zeropage_X = 0x94,
 
 
-
-        CLC = 0x18,
         // ADC Add Memory to Accumulator with Carry
         ADC_absolute = 0x6D,
         ADC_zeropage = 0x65,
@@ -101,7 +99,7 @@
         //BVS
         BVS_relative = 0x70,
 
-        CLD = 0xD8,
+       
         // Stack
         PHA = 0x48,
         PLA = 0x68,
@@ -118,5 +116,14 @@
         //BIT
         BIT_zeropage = 0x24,
         BIT_absolute = 0x2C,
+
+        //FLAGS
+        SEC = 0x38,
+        SED = 0xF8,
+        SEI = 0x78,
+        CLC = 0x18,
+        CLD = 0xD8,
+        CLI = 0x58,
+        CLV = 0xB8
     }
 }

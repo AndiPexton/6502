@@ -18,7 +18,7 @@ public static class RegisterFunctions
         return (value1 & 128) == 128;
     }
 
-    public static bool OverflowSet(byte value1)
+    public static bool OverflowSet(this byte value1)
     {
         return (value1 & 64) == 64;
     }

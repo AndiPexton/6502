@@ -53,7 +53,7 @@ public static class CpuFunctions
             case "ADC":
                 return Process_ADC(processorState, address ?? 0);
             case "CLC":
-                return processorState.MergeWith(new { C = false });
+                return processorState.Process_CLC();
             case "KIL":
                 throw new ProcessorKillException();
             case "PHA":
@@ -102,11 +102,26 @@ public static class CpuFunctions
                 return processorState.Process_BVC(address ?? 0);
             case "BVS":
                 return processorState.Process_BVS(address ?? 0);
+            case "SEC":
+                return processorState.Process_SEC();
+            case "SED":
+                return processorState.Process_SED();
+            case "SEI":
+                return processorState.Process_SEI();
+            case "CLD":
+                return processorState.Process_CLD();
+            case "CLI":
+                return processorState.Process_CLI();
+            case "CLV":
+                return processorState.Process_CLV();
             case "NOP":
             default:
                 return processorState;
         }
     }
+
+
+
 
     private static I6502_Sate Process_BIT(I6502_Sate processorState, ushort address)
     {
@@ -116,8 +131,8 @@ public static class CpuFunctions
         return processorState.MergeWith(new
         {
             Z = result == 0,
-            N = RegisterFunctions.IsNegative(b),
-            V = RegisterFunctions.OverflowSet(b)
+            N = b.IsNegative(),
+            V = b.OverflowSet()
         });
     }
 
@@ -160,7 +175,7 @@ public static class CpuFunctions
         return processorState.MergeWith(new
         {
             Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
+            N = value.IsNegative(),
             C = (b & 0x80) == 0x80
         });
     }
@@ -172,7 +187,7 @@ public static class CpuFunctions
         {
             A = value,
             Z = value == 0,
-            N = RegisterFunctions.IsNegative(value),
+            N = value.IsNegative(),
             C = (processorState.A & 0x80) == 0x80
         });
     }
@@ -185,7 +200,7 @@ public static class CpuFunctions
         {
             A = value,
             Z = value == 0,
-            N = RegisterFunctions.IsNegative(value)
+            N = value.IsNegative()
         });
     }
 
@@ -201,7 +216,7 @@ public static class CpuFunctions
             C = result > byte.MaxValue,
             V = RegisterFunctions.IsOverflow(value1, processorState.A, (byte)result),
             Z = result == 0,
-            N = RegisterFunctions.IsNegative((byte)result)
+            N = ((byte)result).IsNegative()
         });
     }
 
