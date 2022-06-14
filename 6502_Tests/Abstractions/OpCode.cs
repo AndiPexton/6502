@@ -200,5 +200,25 @@
         INC_zeropage_X = 0xF6,
         INC_absolute = 0xEE,
         INC_absolute_X = 0xFE,
+
+        // EOR
+        EOR_immediate = 0x49,
+        EOR_zeropage = 0x45,
+        EOR_zeropage_X = 0x55,
+        EOR_absolute = 0x4D,
+        EOR_absolute_x = 0x5D,
+        EOR_absolute_Y = 0x59,
+        EOR_indirect_X = 0x41,
+        EOR_indirect_Y = 0x51,
+
+        // ORA
+        ORA_immediate = 0x09,
+        ORA_zeropage = 0x05,
+        ORA_zeropage_X = 0x15,
+        ORA_absolute = 0x0D,
+        ORA_absolute_x = 0x1D,
+        ORA_absolute_Y = 0x19,
+        ORA_indirect_X = 0x01,
+        ORA_indirect_Y = 0x11
     }
 }

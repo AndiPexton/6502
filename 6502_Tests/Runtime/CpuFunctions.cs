@@ -147,13 +147,40 @@ public static class CpuFunctions
                 return Process_INC(processorState, address ?? 0);
             case "INY":
                 return Process_INY(processorState);
-
             case "INX":
                 return Process_INX(processorState);
+            case "EOR":
+                return Process_EOR(processorState, address ?? 0);
+            case "ORA":
+                return Process_ORA(processorState, address ?? 0);
             case "NOP":
             default:
                 return processorState;
         }
+    }
+
+    private static I6502_Sate Process_EOR(I6502_Sate processorState, ushort address)
+    {
+        var value = Address.Read(address, 1)[0];
+        var result = (byte)(value ^ processorState.A);
+        return processorState.MergeWith(new
+        {
+            A = result,
+            Z = result == 0,
+            N = result.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_ORA(I6502_Sate processorState, ushort address)
+    {
+        var value = Address.Read(address, 1)[0];
+        var result = (byte)(value | processorState.A);
+        return processorState.MergeWith(new
+        {
+            A = result,
+            Z = result == 0,
+            N = result.IsNegative()
+        });
     }
 
     private static I6502_Sate Process_DEX(I6502_Sate processorState)

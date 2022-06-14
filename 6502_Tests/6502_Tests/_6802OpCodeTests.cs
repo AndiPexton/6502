@@ -1801,5 +1801,62 @@ namespace _6502_Tests
             newState.Z.Should().Be(zero);
             newState.N.Should().Be(negative);
         }
+
+
+
+        [Theory]
+        [InlineData(0x0F, 0xF0, 0xFF, false, true)]
+        [InlineData(0xFF, 0xF0, 0x0F, false, false)]
+        [InlineData(0xFF, 0xFF, 0x00, true, false)]
+        public void Test_EOR(byte input, byte acc, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, input,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LDA_immediate, acc,
+                (byte)OpCode.EOR_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
+        [Theory]
+        [InlineData(0x0F, 0xF0, 0xFF, false, true)]
+        [InlineData(0xFF, 0xF0, 0xFF, false, true)]
+        [InlineData(0xFF, 0xFF, 0xFF, false, true)]
+        [InlineData(0x00, 0x0F, 0x0F, false, false)]
+        [InlineData(0x00, 0x00, 0x00, true, false)]
+        public void Test_ORA(byte input, byte acc, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, input,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LDA_immediate, acc,
+                (byte)OpCode.ORA_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
     }
 }
