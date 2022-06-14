@@ -129,12 +129,117 @@ public static class CpuFunctions
                 return Process_ROR(processorState, address);
             case "LSR":
                 return Process_LSR(processorState, address);
+            case "CMP":
+                return Process_CMP(processorState, address ?? 0);
 
+            case "CPX":
+                return Process_CPX(processorState, address ?? 0);
+            case "CPY":
+                return Process_CPY(processorState, address ?? 0);
+
+            case "DEC":
+                return Process_DEC(processorState, address ?? 0);
+            case "DEX":
+                return Process_DEX(processorState);
+            case "DEY":
+                return Process_DEY(processorState);
+            case "INC":
+                return Process_INC(processorState, address ?? 0);
+            case "INY":
+                return Process_INY(processorState);
+
+            case "INX":
+                return Process_INX(processorState);
             case "NOP":
             default:
                 return processorState;
         }
     }
+
+    private static I6502_Sate Process_DEX(I6502_Sate processorState)
+    {
+        var value = (byte)(processorState.X - 1);
+        return processorState.MergeWith(new
+        {
+            X = value,
+            Z = value == 0,
+            N = value.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_DEY(I6502_Sate processorState)
+    {
+        var value = (byte)(processorState.Y - 1);
+        return processorState.MergeWith(new
+        {
+            Y = value,
+            Z = value == 0,
+            N = value.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_INX(I6502_Sate processorState)
+    {
+        var value = (byte)(processorState.X + 1);
+        return processorState.MergeWith(new
+        {
+            X = value,
+            Z = value == 0,
+            N = value.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_INY(I6502_Sate processorState)
+    {
+        var value = (byte)(processorState.Y + 1);
+        return processorState.MergeWith(new
+        {
+            Y = value,
+            Z = value == 0,
+            N = value.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_DEC(I6502_Sate processorState, ushort address)
+    {
+        var value = Address.Read(address, 1)[0];
+        value = (byte)(value - 1);
+        Address.WriteAt(address, value);
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = value.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_INC(I6502_Sate processorState, ushort address)
+    {
+        var value = Address.Read(address, 1)[0];
+        value = (byte)(value + 1);
+        Address.WriteAt(address, value);
+        return processorState.MergeWith(new
+        {
+            Z = value == 0,
+            N = value.IsNegative()
+        });
+    }
+
+    private static I6502_Sate Process_CPX(I6502_Sate processorState, ushort address) =>
+        Compare(processorState, Address.Read(address, 1)[0], processorState.X);
+
+    private static I6502_Sate Process_CPY(I6502_Sate processorState, ushort address) =>
+        Compare(processorState, Address.Read(address, 1)[0], processorState.Y);
+
+    private static I6502_Sate Process_CMP(I6502_Sate processorState, ushort address) => 
+        Compare(processorState, Address.Read(address, 1)[0], processorState.A);
+
+    private static I6502_Sate Compare(I6502_Sate processorState, byte value, byte register) =>
+        processorState.MergeWith(new
+        {
+            C = register >= value,
+            Z = value == register,
+            N = ((byte)(register - value)).IsNegative()
+        });
 
     private static I6502_Sate Process_ROL(I6502_Sate processorState, ushort? address)
     {

@@ -161,6 +161,44 @@
         LSR_zeropage = 0x46,
         LSR_zeropage_X = 0x56,
         LSR_absolute = 0x4E,
-        LSR_ABSOLUTE_x = 0X5E
+        LSR_ABSOLUTE_x = 0X5E,
+
+        // CMP
+        CMP_immediate = 0xC9,
+        CMP_zeropage = 0xC5,
+        CMP_zeropage_X = 0xD5,
+        CMP_absolute = 0xCD,
+        CMP_absolute_x = 0xDD,
+        CMP_absolute_Y = 0xD9,
+        CMP_indirect_X = 0xC1,
+        CMP_indirect_Y = 0xD1,
+
+        // CPX
+        CPX_immediate = 0xE0,
+        CPX_zeropage = 0xE4,
+        CPX_absolute = 0xEC,
+
+        // CPY
+        CPY_immediate = 0xC0,
+        CPY_zeropage = 0xC4,
+        CPY_absolute = 0xCC,
+
+        // DEC
+        DEC_zeropage = 0xC6,
+        DEC_zeropage_X = 0xD6,
+        DEC_absolute = 0xCE,
+        DEC_absolute_X = 0xDE,
+
+        // Registers Dec/Inc
+        DEX = 0xCA,
+        DEY = 0x88,
+        INX = 0xE8,
+        INY = 0xC8,
+
+        // INC
+        INC_zeropage = 0xE6,
+        INC_zeropage_X = 0xF6,
+        INC_absolute = 0xEE,
+        INC_absolute_X = 0xFE,
     }
 }

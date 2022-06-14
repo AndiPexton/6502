@@ -1529,5 +1529,277 @@ namespace _6502_Tests
 
             newState.A.Should().Be(0b00000001);
         }
+
+        [Fact]
+        public void Test_CMP_Same()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.CMP_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0xFF);
+            newState.Z.Should().BeTrue();
+            newState.N.Should().BeFalse();
+            newState.C.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_CMP_Less()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFA,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.CMP_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0xFF);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeFalse();
+            newState.C.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_CMP_More()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LDA_immediate, 0xFA,
+                (byte)OpCode.CMP_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0xFA);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_CPX_More()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LDX_immediate, 0xFA,
+                (byte)OpCode.CPX_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.X.Should().Be(0xFA);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Test_CPY_More()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.LDY_immediate, 0xFA,
+                (byte)OpCode.CPY_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.Y.Should().Be(0xFA);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+            newState.C.Should().BeFalse();
+        }
+
+
+
+        [Theory]
+        [InlineData(0x01, 0x00, true, false)]
+        [InlineData(0x02, 0x01, false, false)]
+        [InlineData(0x00, 0xFF, false, true)]
+        public void Test_DEC(byte input, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, input,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.DEC_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            var result = AddressSpace.Read(0x0080, 1)[0];
+
+            result.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
+        [Theory]
+        [InlineData(0x01, 0x00, true, false)]
+        [InlineData(0x02, 0x01, false, false)]
+        [InlineData(0x00, 0xFF, false, true)]
+        public void Test_DEX(byte input, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, input,
+                (byte)OpCode.DEX,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.X.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
+        [Theory]
+        [InlineData(0x01, 0x00, true, false)]
+        [InlineData(0x02, 0x01, false, false)]
+        [InlineData(0x00, 0xFF, false, true)]
+        public void Test_DEY(byte input, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDY_immediate, input,
+                (byte)OpCode.DEY,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.Y.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
+
+        [Theory]
+        [InlineData(0x01, 0x02, false, false)]
+        [InlineData(0xFF, 0x00, true, false)]
+        [InlineData(0x7F, 0x80, false, true)]
+        public void Test_INC(byte input, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, input,
+                (byte)OpCode.STA_zeropage, 0x80,
+                (byte)OpCode.INC_zeropage, 0x80,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            var result = AddressSpace.Read(0x0080, 1)[0];
+
+            result.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
+        [Theory]
+        [InlineData(0x01, 0x02, false, false)]
+        [InlineData(0xFF, 0x00, true, false)]
+        [InlineData(0x7F, 0x80, false, true)]
+        public void Test_INX(byte input, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, input,
+                (byte)OpCode.INX,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.X.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
+
+        [Theory]
+        [InlineData(0x01, 0x02, false, false)]
+        [InlineData(0xFF, 0x00, true, false)]
+        [InlineData(0x7F, 0x80, false, true)]
+        public void Test_INY(byte input, byte expected, bool zero, bool negative)
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDY_immediate, input,
+                (byte)OpCode.INY,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.Y.Should().Be(expected);
+            newState.Z.Should().Be(zero);
+            newState.N.Should().Be(negative);
+        }
     }
 }
