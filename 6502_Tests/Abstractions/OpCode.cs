@@ -68,7 +68,7 @@
         ADC_indirect_Y = 0x71,
         ADC_immediate = 0x69,
         // AND
-        AND_imediate = 0x29,
+        AND_immediate = 0x29,
         AND_zeropage = 0x25,
         AND_zeropage_X = 0x35,
         AND_absolute = 0x2D,

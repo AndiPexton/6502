@@ -9,7 +9,7 @@ public static class CpuFunctions
 {
     public const int EndOfAddress = 0xFFFF;
     private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
-
+    private static ILogger Logger => Shelf.RetrieveInstance<ILogger>();
     public static I6502_Sate RunCycle(this I6502_Sate processorState)
     {
         if (processorState.ProgramCounter == 0)
@@ -19,6 +19,8 @@ public static class CpuFunctions
             });
             
         var opCode = ReadOpCodeFromCurrentProgramPosition(processorState);
+
+        Logger?.LogInstruction(opCode, processorState.ProgramCounter);
 
         return processorState.IncrementProgramCounter().ProcessOpCode(opCode);
     }
