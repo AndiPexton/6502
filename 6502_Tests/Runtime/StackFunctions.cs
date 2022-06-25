@@ -6,13 +6,17 @@ namespace Runtime;
 
 public static class StackFunctions
 {
+    private static ILogger Logger => Shelf.RetrieveInstance<ILogger>();
+
     private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
     public static (I6502_Sate, byte) PullFromStack(this I6502_Sate processorState)
     {
         if (processorState.S == 0xFF) return (processorState, (byte)0x00);
 
         processorState = processorState.MergeWith(new { S = processorState.S + 1 });
-        return (processorState, Address.Read(processorState.GetCurrentStackAddress(), 1)[0]);
+        var pulledValue = Address.Read(processorState.GetCurrentStackAddress(), 1)[0];
+        Logger?.LogStackPull(pulledValue);
+        return (processorState, pulledValue);
     }
 
 
@@ -24,6 +28,7 @@ public static class StackFunctions
     {
         if (processorState.S == 0x00) throw new StackOverflowException();
         Address.WriteAt(processorState.GetCurrentStackAddress(), value);
+        Logger?.LogStackPush(value);
         return processorState.MergeWith(new { S = processorState.S - 1 });
     }
 

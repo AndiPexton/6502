@@ -39,6 +39,8 @@ public static class CpuFunctions
         if (opCodeAndAddressMode.Length > 1)
             (address, processorState) = AddressingModeFunctions.ReadAddressAndIncrementProgramCounter(processorState, opCodeAndAddressMode.Skip(1).ToArray());
 
+        Logger?.LogAddress(address);
+
         switch (opCodeAndAddressMode[0])
         {
             case "LDY":
@@ -133,12 +135,10 @@ public static class CpuFunctions
                 return Process_LSR(processorState, address);
             case "CMP":
                 return Process_CMP(processorState, address ?? 0);
-
             case "CPX":
                 return Process_CPX(processorState, address ?? 0);
             case "CPY":
                 return Process_CPY(processorState, address ?? 0);
-
             case "DEC":
                 return Process_DEC(processorState, address ?? 0);
             case "DEX":
@@ -320,6 +320,9 @@ public static class CpuFunctions
 
     private static I6502_Sate Process_RTS(I6502_Sate processorState)
     {
+        Logger?.LogStackPointer(processorState.S);
+        //if (processorState.S > 0xFC) 
+        //    return processorState;
         (processorState, var highByte) = processorState.PullFromStack();
         (processorState, var lowByte) = processorState.PullFromStack();
         var address = BitConverter.ToUInt16(new[] { lowByte, highByte });

@@ -28,8 +28,7 @@ public static class RegisterFunctions
 
     public static byte ReadStateRegister(this I6502_Sate processorState, bool br = false)
     {
-        byte sr = 0;
-        sr = (byte)(processorState.C ? sr + (byte)0x01 : sr);
+        var sr = (byte)(processorState.C ? (byte)0x01 : 0);
         sr = (byte)(processorState.Z ? sr + (byte)0x02 : sr);
         sr = (byte)(processorState.I ? sr + (byte)0x04 : sr);
         sr = (byte)(processorState.D ? sr + (byte)0x08 : sr);
@@ -48,7 +47,7 @@ public static class RegisterFunctions
             Z = (sr & 0x02) == 0x02,
             I = (sr & 0x04) == 0x04,
             D = (sr & 0x08) == 0x08,
-            B = (sr & 0x10) == 0x10,
+           // B = (sr & 0x10) == 0x10,
             V = (sr & 0x40) == 0x40,
             N = (sr & 0x80) == 0x80
         });
@@ -56,7 +55,7 @@ public static class RegisterFunctions
 
     public static bool IsOverflow(byte value1, byte value2, byte result)
     {
-        return (RegisterFunctions.IsNegative(value1) == RegisterFunctions.IsNegative(value2))
-               & (RegisterFunctions.IsNegative(value1) != RegisterFunctions.IsNegative(result));
+        return (value1.IsNegative() == value2.IsNegative())
+               & (value1.IsNegative() != result.IsNegative());
     }
 }

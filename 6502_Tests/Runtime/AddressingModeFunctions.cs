@@ -7,7 +7,6 @@ public static class AddressingModeFunctions
 {
 
     private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
-
     public static (ushort,I6502_Sate) ReadAddressAndIncrementProgramCounter(I6502_Sate processorState, string[] addressMode) =>
         addressMode[0].ToLower() switch
         {
@@ -19,6 +18,7 @@ public static class AddressingModeFunctions
             _ => (0, processorState)
         };
 
+  
     private static (ushort, I6502_Sate) ResolveRelativeAddressing(I6502_Sate processorState)
     {
         var b = Address.Read(processorState.ProgramCounter, 1)[0];
