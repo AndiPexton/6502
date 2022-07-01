@@ -8,4 +8,5 @@ public interface ILogger
     void LogStackPull(byte pulledValue);
     void LogStackPush(byte value);
     void LogStackPointer(byte S);
+    void LogValueAtAddress(byte b);
 }

@@ -40,6 +40,8 @@ public static class CpuFunctions
             (address, processorState) = AddressingModeFunctions.ReadAddressAndIncrementProgramCounter(processorState, opCodeAndAddressMode.Skip(1).ToArray());
 
         Logger?.LogAddress(address);
+        if (address.HasValue && opCode.ToString().StartsWith("LD"))
+            Logger?.LogValueAtAddress(Address.Read(address.Value, 1)[0]);
 
         switch (opCodeAndAddressMode[0])
         {
@@ -275,8 +277,15 @@ public static class CpuFunctions
         var value = address == null ? processorState.A : Address.Read(address.Value, 1)[0];
 
         value = (byte)((byte)(value << 1) | (byte)(value >> 7));
-
+        var carry = (value & 0b0000001) == 1;
+        value = (byte)(processorState.C ? value | 1 : value & 0b11111110);
         if(address!=null) Address.WriteAt(address.Value, value);
+
+        processorState = processorState.MergeWith(new
+        {
+            Z = value == 0,
+            C = carry
+        });
 
         return address == null
             ? processorState.MergeWith(new
@@ -292,7 +301,16 @@ public static class CpuFunctions
 
         value = (byte)((byte)(value >> 1) | (byte)(value << 7));
 
+        var carry = (value & 0b10000000) == 0b10000000;
+        value = (byte)(processorState.C ? value | 0b10000000 : value & 0b01111111);
+
         if (address != null) Address.WriteAt(address.Value, value);
+
+        processorState = processorState.MergeWith(new
+        {
+            Z = value == 0,
+            C = carry
+        });
 
         return address == null
             ? processorState.MergeWith(new
@@ -306,9 +324,17 @@ public static class CpuFunctions
     {
         var value = address == null ? processorState.A : Address.Read(address.Value, 1)[0];
 
+        var carry = (value & 1) == 1;
+
         value = (byte)(value >> 1);
 
         if (address != null) Address.WriteAt(address.Value, value);
+
+        processorState = processorState.MergeWith(new
+        {
+            Z = value == 0,
+            C = carry
+        });
 
         return address == null
             ? processorState.MergeWith(new
@@ -433,7 +459,7 @@ public static class CpuFunctions
             A = (byte)result,
             C = result > byte.MaxValue,
             V = RegisterFunctions.IsOverflow(value1, processorState.A, (byte)result),
-            Z = result == 0,
+            Z = (byte)result == 0,
             N = ((byte)result).IsNegative()
         });
     }

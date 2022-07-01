@@ -267,6 +267,29 @@ namespace _6502_Tests
             newState.ReadCarryFlag().Should().Be(1);
         }
 
+
+        [Fact]
+        public void Test_ADC_AddWithCarry_imediate()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+               
+                (byte)OpCode.LDA_immediate, 0x01,
+                (byte)OpCode.ADC_immediate, 0xFF, 
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0);
+            newState.C.Should().BeTrue();
+            newState.Z.Should().BeTrue();
+        }
+
         [Fact]
         public void Test_SBC_Subtract()
         {
@@ -1379,6 +1402,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0b00000010);
+            newState.C.Should().BeFalse();
         }
 
         [Fact]
@@ -1397,7 +1421,30 @@ namespace _6502_Tests
 
             var newState = RunToEnd();
 
-            newState.A.Should().Be(0b00000001);
+            newState.A.Should().Be(0b00000000);
+            newState.Z.Should().BeTrue();
+            newState.C.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_ROL_Wrap_C()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b10000000,
+                (byte)OpCode.ROL,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b00000000);
+            newState.C.Should().BeTrue();
+            newState.Z.Should().BeTrue();
         }
 
         [Fact]
@@ -1417,7 +1464,8 @@ namespace _6502_Tests
 
             var newState = RunToEnd();
 
-            newState.A.Should().Be(0b00000010);
+            newState.A.Should().Be(0b00000001);
+            newState.C.Should().BeFalse();
         }
 
 
@@ -1441,6 +1489,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0b00000010);
+            newState.C.Should().BeFalse();
         }
 
         [Fact]
@@ -1460,7 +1509,8 @@ namespace _6502_Tests
 
             var newState = RunToEnd();
 
-            newState.A.Should().Be(0b01000000);
+            newState.A.Should().Be(0b10000000);
+            newState.C.Should().BeFalse();
         }
 
 
@@ -1483,7 +1533,8 @@ namespace _6502_Tests
 
             var newState = RunToEnd();
 
-            newState.A.Should().Be(0b10000001);
+            newState.A.Should().Be(0b00000001);
+            newState.C.Should().BeTrue();
         }
 
 
@@ -1506,6 +1557,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0b00000001);
+            newState.C.Should().BeFalse();
         }
 
         [Fact]
@@ -1528,6 +1580,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0b00000001);
+            newState.C.Should().BeTrue();
         }
 
         [Fact]
