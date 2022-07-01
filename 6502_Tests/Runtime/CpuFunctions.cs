@@ -25,12 +25,13 @@ public static class CpuFunctions
         return processorState.IncrementProgramCounter().ProcessOpCode(opCode);
     }
 
-    private static OpCode ReadOpCodeFromCurrentProgramPosition(I6502_Sate processorState) =>
-        Duck.CastToEnum<OpCode>(
-            Address
-                ?.Read(processorState.ProgramCounter, 1)[0] 
-            ?? (int)OpCode.KIL
-        );
+    private static OpCode ReadOpCodeFromCurrentProgramPosition(I6502_Sate processorState)
+    {
+        var rawCode = Address
+                        ?.Read(processorState.ProgramCounter, 1)[0]
+                    ?? (int)OpCode.KIL;
+        return Duck.CastToEnum<OpCode>(rawCode);
+    }
 
     private static I6502_Sate ProcessOpCode(this I6502_Sate processorState, OpCode opCode)
     {
@@ -40,8 +41,6 @@ public static class CpuFunctions
             (address, processorState) = AddressingModeFunctions.ReadAddressAndIncrementProgramCounter(processorState, opCodeAndAddressMode.Skip(1).ToArray());
 
         Logger?.LogAddress(address);
-        if (address.HasValue && opCode.ToString().StartsWith("LD"))
-            Logger?.LogValueAtAddress(Address.Read(address.Value, 1)[0]);
 
         switch (opCodeAndAddressMode[0])
         {
@@ -158,6 +157,7 @@ public static class CpuFunctions
             case "ORA":
                 return Process_ORA(processorState, address ?? 0);
             case "NOP":
+                return processorState;
             default:
                 return processorState;
         }
@@ -246,12 +246,13 @@ public static class CpuFunctions
     private static I6502_Sate Process_INC(I6502_Sate processorState, ushort address)
     {
         var value = Address.Read(address, 1)[0];
-        value = (byte)(value + 1);
-        Address.WriteAt(address, value);
+        var result = (byte)(value + 1);
+        Address.WriteAt(address, result);
         return processorState.MergeWith(new
         {
-            Z = value == 0,
-            N = value.IsNegative()
+            Z = result == 0,
+            N = result.IsNegative(),
+            C = result < value
         });
     }
 

@@ -23,7 +23,7 @@ namespace RunCodeTests
         private const ushort BasicRom = 0xE000;
         private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
 
-        [Fact]
+     
         public void RunCode()
         {
             Shelf.Clear();
@@ -40,7 +40,7 @@ namespace RunCodeTests
 
             Address.RegisterOverlay(new Mode7Screen(_testOutputHelper));
             Address.RegisterOverlay(new _6522_VIA_SYSTEM_VIA23());
-            var state = RunToEnd();
+            var state = RunToEndOr(100000);
 
         }
 
@@ -67,15 +67,18 @@ namespace RunCodeTests
             Address.RegisterOverlay(display);
             Address.RegisterOverlay(keyboard);
 
-            keyboard.Type("E7");
-            var state = RunToEnd();
+            keyboard.Type("E000R");
+            keyboard.Type("10 PRINT \"HELLO\"");
+
+            var state = RunToEndOr(10000);
             display.Flush();
             File.WriteAllText("D:\\Examples\\appleOne.log", logger.GetLog());
+            File.WriteAllBytes("D:\\Examples\\appleOne.dump", Address.Read(0,0xFFFF));
         }
 
 
 
-        private static I6502_Sate RunToEnd()
+        private static I6502_Sate RunToEndOr(int limit)
         {
             var newState = CpuFunctions.Empty6502ProcessorState();
             var run = true;
@@ -92,7 +95,7 @@ namespace RunCodeTests
                     run = false;
                 }
 
-                if (instructions > 1000) run = false;
+                if (instructions > limit) run = false;
             }
 
             return newState;

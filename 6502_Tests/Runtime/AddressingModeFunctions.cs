@@ -68,7 +68,7 @@ public static class AddressingModeFunctions
     private static ushort GetZeroPageAddress(byte index)
     {
         return BitConverter.ToUInt16(new byte[]
-            { (byte)0x00, index});
+            {  index, (byte)0x00});
     }
 
     private static (ushort, I6502_Sate) ResolveZeroPageAddressing(I6502_Sate processorState, string[] addressMode) =>

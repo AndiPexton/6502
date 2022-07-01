@@ -132,6 +132,67 @@ namespace _6502_Tests
         }
 
         [Fact]
+        public void Test_LDA_indirect_X()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, (byte)0x01,
+                (byte)OpCode.LDA_immediate, (byte)0xAA,
+                (byte)OpCode.STA_absolute, (byte)0x10, (byte)0xEE,
+
+                (byte)OpCode.LDA_immediate, (byte)0x10,
+                (byte)OpCode.STA_zeropage_X, (byte)0x28,
+                (byte)OpCode.INX,
+                (byte)OpCode.LDA_immediate, (byte)0xEE,
+                (byte)OpCode.STA_zeropage_X, (byte)0x28,
+
+                (byte)OpCode.LDX_immediate, (byte)0x01,
+                (byte)OpCode.LDA_indirect_X, (byte)0x28,
+                
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+            newState.A.Should().Be(0xAA);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+        }
+
+
+        [Fact]
+        public void Test_JMP_indirect()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDY_immediate, (byte)0x01,
+
+                (byte)OpCode.LDA_immediate, (byte)OpCode.KIL,
+                (byte)OpCode.STA_absolute, (byte)0x10, (byte)0xEE,
+
+                (byte)OpCode.LDX_immediate, (byte)0x10,
+                (byte)OpCode.STX_zeropage_Y, (byte)0x28,
+                (byte)OpCode.INY,
+                (byte)OpCode.LDX_immediate, (byte)0xEE,
+                (byte)OpCode.STX_zeropage_Y, (byte)0x28,
+
+                
+                (byte)OpCode.JMP_indirect, (byte)0x29, (byte)0x00
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+            newState.X.Should().Be(0xEE);
+            newState.ProgramCounter.Should().Be(0xEE10);
+        }
+
+        [Fact]
         public void TestLoadAll()
         {
             SetupAddressSpaceAndResetVector();
