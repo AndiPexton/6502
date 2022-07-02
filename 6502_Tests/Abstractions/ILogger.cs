@@ -9,4 +9,8 @@ public interface ILogger
     void LogStackPush(byte value);
     void LogStackPointer(byte S);
     void LogValueAtAddress(byte b);
+    void LogRead(ushort address, byte value);
+    void LogWrite(ushort address, byte value);
+    void LogTextOutput(string asciiChar);
+    void LogAsciiInput(string asciiChar);
 }

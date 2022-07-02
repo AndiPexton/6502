@@ -73,11 +73,13 @@ namespace RunCodeTests
 
             var state = RunToEndOr(10000);
             display.Flush();
-            File.WriteAllText("D:\\Examples\\appleOne.log", logger.GetLog());
-            File.WriteAllBytes("D:\\Examples\\appleOne.dump", Address.Read(0,0xFFFF));
 
             var output = display.GetOutput();
 
+            File.WriteAllText("D:\\Examples\\appleOne.log", logger.GetLog());
+            File.WriteAllBytes("D:\\Examples\\appleOne.dump", Address.Read(0,0xFFFF));
+            File.WriteAllText("D:\\Examples\\appleOne.txt", output);
+            
             Assert.Equal("\\\r\nE000R\r\n\r\nE000: 4C\r\n>PRINT \"HELLO\"\r\nHELLO\r\n>", output );
 
         }

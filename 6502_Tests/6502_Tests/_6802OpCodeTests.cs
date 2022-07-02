@@ -132,6 +132,32 @@ namespace _6502_Tests
         }
 
         [Fact]
+        public void Test_STA_zeropage()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, (byte)0xFE,
+                (byte)OpCode.STA_zeropage, (byte)0x24,
+                (byte)OpCode.LDA_zeropage, (byte)0x24,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            var readZeroPage = AddressSpace.Read(0x0024, 1)[0];
+
+            readZeroPage.Should().Be(0xFE);
+
+            newState.A.Should().Be(0xFE);
+            newState.Z.Should().BeFalse();
+            newState.N.Should().BeTrue();
+        }
+
+        [Fact]
         public void Test_LDA_indirect_X()
         {
             SetupAddressSpaceAndResetVector();

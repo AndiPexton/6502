@@ -1,11 +1,13 @@
 ﻿using System.Text;
 using Abstractions;
+using Dependency;
 using Xunit.Abstractions;
 
 namespace RunCodeTests;
 
 public class FakeAppleDisplay : IOverLay
 {
+    private ILogger Logger => Shelf.RetrieveInstance<ILogger>();
     private readonly ITestOutputHelper _console;
     private readonly StringBuilder _lineBuffer;
     private readonly StringBuilder _output;
@@ -45,7 +47,9 @@ public class FakeAppleDisplay : IOverLay
                 Flush();
                 break;
             default:
-                _lineBuffer.Append(AsciiByteToString(b));
+                var asciiChar = AsciiByteToString(b);
+                Logger?.LogTextOutput(asciiChar);
+                _lineBuffer.Append(asciiChar);
                 break;
         }
     }

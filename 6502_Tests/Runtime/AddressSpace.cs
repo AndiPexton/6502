@@ -1,9 +1,12 @@
 using Abstractions;
+using Dependency;
 
 namespace Runtime;
 
 public class AddressSpace : IAddressSpace
 {
+    private ILogger Logger => Shelf.RetrieveInstance<ILogger>();
+
     public const ushort _ResetVector = 65532;
     public const ushort _IRQVector = 0xFFFE;
     private const byte ZeroByte = (byte)0;
@@ -56,7 +59,7 @@ public class AddressSpace : IAddressSpace
     {
         foreach (var b in code)
         {
-            WriteByte(i, b);
+            WriteAt(i, b);
             i++;
         }
     }
@@ -64,6 +67,7 @@ public class AddressSpace : IAddressSpace
     public void WriteAt(ushort i, byte value)
     {
         WriteByte(i, value);
+        Logger?.LogWrite(i, value);
     }
 
     private void WriteByte(ushort address, byte b)
@@ -102,8 +106,12 @@ public class AddressSpace : IAddressSpace
     private byte ResolveValue(ushort address)
     {
         var overLay = GetOverlay(address);
+        byte value;
         if (overLay != null)
-            return overLay.Read(address);
-        return map.ContainsKey(address) ? map[address] : (byte)0;
+            value = overLay.Read(address);
+        else
+            value = map.ContainsKey(address) ? map[address] : (byte)0;
+        Logger?.LogRead(address, value);
+        return value;
     }
 }

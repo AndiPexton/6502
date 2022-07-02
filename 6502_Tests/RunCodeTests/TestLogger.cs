@@ -25,7 +25,7 @@ public class TestLogger : ILogger
 
     public void LogAddress(ushort? address)
     {
-        var addressOutput = address == null ? string.Empty : $" ${address.Value:X4}";
+        var addressOutput = address == null ? string.Empty : $"  A[${address.Value:X4}]";
         _log.Append($"{addressOutput}");
     }
 
@@ -64,5 +64,27 @@ public class TestLogger : ILogger
             var format = Encoding.ASCII.GetString(new[] { b });
             _log.Append($" \"{format}\"");
         }
+    }
+
+    public void LogRead(ushort address, byte value)
+    {
+        _log.AppendLine();
+        _log.Append($"\t\t R[${address:X4}] >> ${value:X2} ({value})");
+    }
+
+    public void LogWrite(ushort address, byte value)
+    {
+        _log.AppendLine();
+        _log.Append($"\t\t W[${address:X4}] << ${value:X2} ({value})");
+    }
+
+    public void LogTextOutput(string asciiChar)
+    {
+        _log.Append($" \"{asciiChar}\">");
+    }
+
+    public void LogAsciiInput(string asciiChar)
+    {
+        _log.Append($" <\"{asciiChar}\"");
     }
 }

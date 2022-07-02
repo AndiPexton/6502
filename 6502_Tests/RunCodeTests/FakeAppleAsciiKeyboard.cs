@@ -1,11 +1,15 @@
 ﻿using System.Text;
 using Abstractions;
+using Dependency;
 
 namespace RunCodeTests;
 
 public class FakeAppleAsciiKeyboard : IOverLay
 {
+    private ILogger Logger => Shelf.RetrieveInstance<ILogger>();
+
     private Queue<byte> _keyBuffer;
+
     public FakeAppleAsciiKeyboard()
     {
         Start = 0xD010;
@@ -36,7 +40,7 @@ public class FakeAppleAsciiKeyboard : IOverLay
         {
             var b = _keyBuffer.Dequeue();
             var dequeue = (byte)(b | 0b10000000);
-
+            Logger?.LogAsciiInput(Encoding.ASCII.GetString(new [] {b}));
             return dequeue;
         }
 
