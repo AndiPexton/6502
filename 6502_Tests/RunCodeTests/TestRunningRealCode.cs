@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Abstractions;
 using Dependency;
+using FluentAssertions;
 using FluentAssertions.Equivalency;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Runtime;
@@ -68,12 +69,17 @@ namespace RunCodeTests
             Address.RegisterOverlay(keyboard);
 
             keyboard.Type("E000R");
-            keyboard.Type("10 PRINT \"HELLO\"");
+            keyboard.Type("PRINT \"HELLO\"");
 
             var state = RunToEndOr(10000);
             display.Flush();
             File.WriteAllText("D:\\Examples\\appleOne.log", logger.GetLog());
             File.WriteAllBytes("D:\\Examples\\appleOne.dump", Address.Read(0,0xFFFF));
+
+            var output = display.GetOutput();
+
+            Assert.Equal("\\\r\nE000R\r\n\r\nE000: 4C\r\n>PRINT \"HELLO\"\r\nHELLO\r\n>", output );
+
         }
 
 

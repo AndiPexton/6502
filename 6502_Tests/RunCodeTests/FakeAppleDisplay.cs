@@ -6,14 +6,16 @@ namespace RunCodeTests;
 
 public class FakeAppleDisplay : IOverLay
 {
-    private ITestOutputHelper _console;
-    private StringBuilder _lineBuffer;
+    private readonly ITestOutputHelper _console;
+    private readonly StringBuilder _lineBuffer;
+    private readonly StringBuilder _output;
     public FakeAppleDisplay(ITestOutputHelper testOutputHelper)
     {
         Start = 0xD012;
         End = 0xD012;
         _console = testOutputHelper;
         _lineBuffer = new StringBuilder();
+        _output = new StringBuilder();
     }
 
     public int Start { get;  }
@@ -21,29 +23,42 @@ public class FakeAppleDisplay : IOverLay
 
     public void Flush()
     {
-        _console.WriteLine(_lineBuffer.ToString());
+        OutputLine(_lineBuffer.ToString());
         _lineBuffer.Clear();
+    }
+
+    private void OutputLine(string line)
+    {
+        _console.WriteLine(line);
+        _output.AppendLine(line);
     }
 
     public void Write(ushort address, byte b)
     {
-        if (b == 155) return;
-        b = (byte)(b & 0b01111111);
+        b = StripBit7(b);
 
-        if (b == 13)
+        switch (b)
         {
-            _console.WriteLine(_lineBuffer.ToString());
-            _lineBuffer.Clear();
-        }
-        else
-        {
-            var s = Encoding.ASCII.GetString(new[] { b });
-            _lineBuffer.Append(s);
+            case 27:
+                return;
+            case 13:
+                Flush();
+                break;
+            default:
+                _lineBuffer.Append(AsciiByteToString(b));
+                break;
         }
     }
 
-    public byte Read(ushort address)
-    {
-        return 0;
-    }
+    private static byte StripBit7(byte b) => 
+        (byte)(b & 0b01111111);
+
+    private static string AsciiByteToString(byte b) => 
+        Encoding.ASCII.GetString(new[] { b });
+
+    public byte Read(ushort address) 
+        => 0;
+
+    public string GetOutput() => 
+        _output.ToString();
 }
