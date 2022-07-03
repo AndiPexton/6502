@@ -388,7 +388,8 @@ public static class CpuFunctions
         (processorState, var sr) = processorState.PullFromStack();
         (processorState, var h) = processorState.PullFromStack();
         (processorState, var l) = processorState.PullFromStack();
-        var returnAddress = BitConverter.ToUInt16(new byte[] { l, h });
+       
+        var returnAddress = BitConverter.ToUInt16(new byte[] { h, l });
         return processorState.MergeWith(new
         {
             ProgramCounter = returnAddress
@@ -399,12 +400,13 @@ public static class CpuFunctions
     {
         var returnAddress = BitConverter.GetBytes((ushort)(processorState.ProgramCounter + 1));
         return processorState
-            .PushToStack(returnAddress[0])
             .PushToStack(returnAddress[1])
+            .PushToStack(returnAddress[0])
             .PushToStack(processorState.ReadStateRegister())
             .MergeWith(new
                 {
-                    ProgramCounter = Address.GetIRQVector()
+                    ProgramCounter = Address.GetIRQVector(),
+                    I = true
                 });
     }
 
