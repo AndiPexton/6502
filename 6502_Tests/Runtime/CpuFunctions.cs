@@ -340,7 +340,8 @@ public static class CpuFunctions
         processorState = processorState.MergeWith(new
         {
             Z = value == 0,
-            C = carry
+            C = carry,
+            N = false
         });
 
         return address == null

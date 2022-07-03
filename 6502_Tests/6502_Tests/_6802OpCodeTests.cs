@@ -1678,7 +1678,7 @@ namespace _6502_Tests
 
             byte[] code =
             {
-                (byte)OpCode.LDA_immediate, 0b00000010,
+                (byte)OpCode.LDA_immediate, 0b10000010,
                 (byte)OpCode.STA_zeropage, 0x80,
                 (byte)OpCode.LSR_zeropage, 0x80,
                 (byte)OpCode.LDA_zeropage, 0x80,
@@ -1689,8 +1689,9 @@ namespace _6502_Tests
 
             var newState = RunToEnd();
 
-            newState.A.Should().Be(0b00000001);
+            newState.A.Should().Be(0b01000001);
             newState.C.Should().BeFalse();
+            newState.N.Should().BeFalse();
         }
 
         [Fact]
