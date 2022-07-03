@@ -73,7 +73,7 @@ namespace RunCodeTests
             keyboard.Type("E000R");
             keyboard.Type("PRINT \"HELLO\"");
 
-            var state = RunToEndOr(20000);
+            var state = RunToEndOr(10000);
             display.Flush();
 
             var output = display.GetOutput();
@@ -82,17 +82,15 @@ namespace RunCodeTests
             File.WriteAllBytes("D:\\Examples\\appleOne.dump", Address.Read(0,0xFFFF));
             File.WriteAllText("D:\\Examples\\appleOne.txt", output);
             
-            Assert.Equal("\\\r\nE000R\r\n\r\nE000: 4C\r\n>PRINT \"HELLO\"\r\nHELLO\r\n>", output );
+            Assert.Equal("\\\r\nE000R\r\n\r\nE000: 4C\r\n>PRINT \"HELLO\"\r\nHELLO\r\n\r\n>\r\n", output );
 
         }
 
         [Fact]
-        public void _6502_Func_Tests()
+        public void Debug_6502_Func_Tests()
         {
             Shelf.Clear();
-            // 16-bit reset vector at $FFFC (LB-HB)
-            // Reset all registers program counter set to address in vector
-
+        
             IAddressSpace AddressSpace = new AddressSpace();
 
             Shelf.ShelveInstance<IAddressSpace>(AddressSpace);
@@ -105,7 +103,7 @@ namespace RunCodeTests
             Shelf.ShelveInstance<ILogger>(logger);
             AddressSpace.SetResetVector(0x0400);
             
-            var state = RunToEndOr(100000);
+            var state = RunToEndOr(400000);
             
             File.WriteAllText("D:\\Examples\\test.log", logger.GetLog());
             File.WriteAllBytes("D:\\Examples\\test.dump", Address.Read(0, 0xFFFF));
