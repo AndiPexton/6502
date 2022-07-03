@@ -1601,6 +1601,27 @@ namespace _6502_Tests
             newState.C.Should().BeFalse();
         }
 
+        [Fact]
+        public void Test_ROL_Neg()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0b01000000,
+                (byte)OpCode.ROL,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0b10000000);
+            newState.C.Should().BeFalse();
+            newState.N.Should().BeTrue();
+        }
+
 
 
         [Fact]
@@ -1644,6 +1665,8 @@ namespace _6502_Tests
 
             newState.A.Should().Be(0b10000000);
             newState.C.Should().BeFalse();
+            newState.N.Should().BeTrue();
+
         }
 
 

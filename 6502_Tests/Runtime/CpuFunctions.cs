@@ -251,8 +251,7 @@ public static class CpuFunctions
         return processorState.MergeWith(new
         {
             Z = result == 0,
-            N = result.IsNegative(),
-            C = result < value
+            N = result.IsNegative()
         });
     }
 
@@ -291,7 +290,8 @@ public static class CpuFunctions
         processorState = processorState.MergeWith(new
         {
             Z = value == 0,
-            C = carry
+            C = carry,
+            N = value.IsNegative()
         });
 
         return address == null
@@ -316,7 +316,8 @@ public static class CpuFunctions
         processorState = processorState.MergeWith(new
         {
             Z = value == 0,
-            C = carry
+            C = carry,
+            N = value.IsNegative()
         });
 
         return address == null
