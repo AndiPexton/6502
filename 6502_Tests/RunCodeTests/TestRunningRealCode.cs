@@ -103,11 +103,12 @@ namespace RunCodeTests
             Shelf.ShelveInstance<ILogger>(logger);
             AddressSpace.SetResetVector(0x0400);
             
-            var state = RunToEndOr(400000);
+            var state = RunToEndOr(55000);
             
             File.WriteAllText("D:\\Examples\\test.log", logger.GetLog());
             File.WriteAllBytes("D:\\Examples\\test.dump", Address.Read(0, 0xFFFF));
-            
+
+            state.ProgramCounter.Should().Be(0x363E);
         }
 
 
@@ -117,11 +118,14 @@ namespace RunCodeTests
             var newState = CpuFunctions.Empty6502ProcessorState();
             var run = true;
             var instructions = 0;
+            ushort lastPc;
             while (run)
             {
                 try
                 {
+                    lastPc = newState.ProgramCounter;
                     newState = newState.RunCycle();
+                    if (lastPc == newState.ProgramCounter) run = false;
                     instructions++;
                 }
                 catch (ProcessorKillException)
