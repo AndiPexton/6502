@@ -1985,6 +1985,7 @@ namespace _6502_Tests
             result.Should().Be(expected);
             newState.Z.Should().Be(zero);
             newState.N.Should().Be(negative);
+            newState.C.Should().Be(false);
         }
 
         [Theory]
