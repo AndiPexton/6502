@@ -109,6 +109,52 @@ namespace _6502_Tests
             newState.N.Should().BeFalse();
         }
 
+
+        [Fact]
+        public void Test_Stack()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDX_immediate, (byte)0xFF,
+                (byte)OpCode.TXS,
+                (byte)OpCode.LDA_immediate, (byte)0x55,
+                (byte)OpCode.PHA,
+                (byte)OpCode.LDA_immediate, (byte)0xAA,
+                (byte)OpCode.PHA,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+            var stack = AddressSpace.Read(0x01FE, 1)[0];
+
+            stack.Should().Be(0xAA);
+            newState.A.Should().Be(0xAA);
+        }
+
+
+        [Fact]
+        public void Test_Flags()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0xFF,
+                (byte)OpCode.CMP_immediate, 0xFF,
+                (byte)OpCode.KIL
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.Z.Should().BeTrue();
+        }
+
         [Fact]
         public void Test_LDA_zeropage()
         {
@@ -1739,6 +1785,29 @@ namespace _6502_Tests
             newState.Z.Should().BeFalse();
             newState.N.Should().BeTrue();
             newState.C.Should().BeFalse();
+        }
+
+
+        [Fact]
+        public void Test_CMP_Zero()
+        {
+            SetupAddressSpaceAndResetVector();
+
+            byte[] code =
+            {
+                (byte)OpCode.LDA_immediate, 0x00,
+                (byte)OpCode.CMP_immediate, 0x00,
+                (byte)OpCode.KIL,
+            };
+
+            AddressSpace.WriteAt(ResetStartAddress, code);
+
+            var newState = RunToEnd();
+
+            newState.A.Should().Be(0x00);
+            newState.Z.Should().BeTrue();
+            newState.N.Should().BeFalse();
+            newState.C.Should().BeTrue();
         }
 
         [Fact]

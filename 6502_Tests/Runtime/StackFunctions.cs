@@ -19,7 +19,7 @@ public static class StackFunctions
 
 
     public static I6502_Sate PushToStack(this I6502_Sate processorState, ushort value) =>
-        BitConverter.GetBytes(value)
+        BitConverter.GetBytes(value).Reverse()
             .Aggregate(processorState, (current, b) => current.PushToStack(b));
 
     public static I6502_Sate PushToStack(this I6502_Sate processorState, byte value)
@@ -31,6 +31,6 @@ public static class StackFunctions
 
     private static ushort GetCurrentStackAddress(this I6502_Sate processorState)
     {
-        return BitConverter.ToUInt16(new byte []{ 0x01, processorState.S });
+        return BitConverter.ToUInt16(new byte []{ processorState.S, 0x01 });
     }
 }

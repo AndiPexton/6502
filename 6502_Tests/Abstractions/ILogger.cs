@@ -13,4 +13,5 @@ public interface ILogger
     void LogWrite(ushort address, byte value);
     void LogTextOutput(string asciiChar);
     void LogAsciiInput(string asciiChar);
+    void LogState(I6502_Sate newState);
 }

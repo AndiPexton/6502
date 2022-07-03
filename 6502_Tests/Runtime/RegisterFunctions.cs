@@ -26,17 +26,17 @@ public static class RegisterFunctions
     public static byte ReadCarryFlag(this I6502_Sate processorState) => 
         processorState.C ? (byte)0x01 : (byte)0x00;
 
-    public static byte ReadStateRegister(this I6502_Sate processorState, bool br = false)
+    public static byte ReadStateRegister(this I6502_Sate processorState, bool br = true)
     {
-        var sr = (byte)(processorState.C ? (byte)0x01 : 0);
-        sr = (byte)(processorState.Z ? sr + (byte)0x02 : sr);
-        sr = (byte)(processorState.I ? sr + (byte)0x04 : sr);
-        sr = (byte)(processorState.D ? sr + (byte)0x08 : sr);
+        var sr = (byte)(processorState.C ? 0x01 : 00);
+        sr = (byte)(processorState.Z ? sr + 0x02 : sr);
+        sr = (byte)(processorState.I ? sr + 0x04 : sr);
+        sr = (byte)(processorState.D ? sr + 0x08 : sr);
         sr = (byte)(br ? sr + (byte)0x10 : sr);
         // bit 5 - 32 0x20 ignore
-        sr = (byte)(processorState.V ? sr + (byte)0x40 : sr);
-        sr = (byte)(processorState.N ? sr + (byte)0x80 : sr);
-        return sr;
+        sr = (byte)(processorState.V ? sr + 0x40 : sr);
+        sr = (byte)(processorState.N ? sr + 0x80 : sr);
+        return (byte)(sr + 0x20);
     }
 
     public static I6502_Sate WriteStateRegister(this I6502_Sate processorState, byte sr)

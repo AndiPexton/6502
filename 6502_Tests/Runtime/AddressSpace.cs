@@ -5,7 +5,7 @@ namespace Runtime;
 
 public class AddressSpace : IAddressSpace
 {
-    private ILogger Logger => Shelf.RetrieveInstance<ILogger>();
+    private static ILogger Logger => Shelf.RetrieveInstance<ILogger>();
 
     public const ushort _ResetVector = 65532;
     public const ushort _IRQVector = 0xFFFE;

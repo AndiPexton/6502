@@ -265,13 +265,19 @@ public static class CpuFunctions
     private static I6502_Sate Process_CMP(I6502_Sate processorState, ushort address) => 
         Compare(processorState, Address.Read(address, 1)[0], processorState.A);
 
-    private static I6502_Sate Compare(I6502_Sate processorState, byte value, byte register) =>
-        processorState.MergeWith(new
+    private static I6502_Sate Compare(I6502_Sate processorState, byte value, byte register)
+    {
+        value = (byte)(value ^ 0xff);
+        var carry = register + value + 1;
+
+        var b = (byte)carry;
+        return processorState.MergeWith(new
         {
-            C = register >= value,
-            Z = value == register,
-            N = ((byte)(register - value)).IsNegative()
+            C = carry > 0xff,
+            Z = b == 0,
+            N = ((byte)(b & 0xff)).IsNegative()
         });
+    }
 
     private static I6502_Sate Process_ROL(I6502_Sate processorState, ushort? address)
     {
@@ -350,16 +356,17 @@ public static class CpuFunctions
         Logger?.LogStackPointer(processorState.S);
         //if (processorState.S > 0xFC) 
         //    return processorState;
-        (processorState, var highByte) = processorState.PullFromStack();
         (processorState, var lowByte) = processorState.PullFromStack();
+        (processorState, var highByte) = processorState.PullFromStack();
+        
         var address = BitConverter.ToUInt16(new[] { lowByte, highByte });
         return processorState
-            .Process_JMP(address);
+            .Process_JMP((ushort)(address+1));
     }
 
     private static I6502_Sate Process_JSR(I6502_Sate processorState, ushort address) =>
         processorState
-            .PushToStack(processorState.ProgramCounter)
+            .PushToStack((ushort)(processorState.ProgramCounter-1))
             .Process_JMP(address);
 
 

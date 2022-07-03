@@ -13,6 +13,8 @@ namespace RunCodeTests
     public class TestRunningRealCode
     {
         private readonly ITestOutputHelper _testOutputHelper;
+        private static ILogger Logger => Shelf.RetrieveInstance<ILogger>();
+
 
         public TestRunningRealCode(ITestOutputHelper testOutputHelper)
         {
@@ -84,6 +86,32 @@ namespace RunCodeTests
 
         }
 
+        [Fact]
+        public void _6502_Func_Tests()
+        {
+            Shelf.Clear();
+            // 16-bit reset vector at $FFFC (LB-HB)
+            // Reset all registers program counter set to address in vector
+
+            IAddressSpace AddressSpace = new AddressSpace();
+
+            Shelf.ShelveInstance<IAddressSpace>(AddressSpace);
+            var logger = new TestLogger();
+            
+            var testRom = File.ReadAllBytes("D:\\Examples\\Emulator\\6502_Tests\\RunCodeTests\\6502_functional_test.rom");
+            
+            Address.WriteAt(0, testRom);
+
+            Shelf.ShelveInstance<ILogger>(logger);
+            AddressSpace.SetResetVector(0x0400);
+            
+            var state = RunToEndOr(100000);
+            
+            File.WriteAllText("D:\\Examples\\test.log", logger.GetLog());
+            File.WriteAllBytes("D:\\Examples\\test.dump", Address.Read(0, 0xFFFF));
+            
+        }
+
 
 
         private static I6502_Sate RunToEndOr(int limit)
@@ -104,8 +132,10 @@ namespace RunCodeTests
                 }
 
                 if (instructions > limit) run = false;
+                Logger?.LogState(newState);
             }
 
+           
             return newState;
         }
 
