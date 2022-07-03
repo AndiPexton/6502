@@ -73,7 +73,7 @@ namespace RunCodeTests
             keyboard.Type("E000R");
             keyboard.Type("PRINT \"HELLO\"");
 
-            var state = RunToEndOr(10000);
+            var state = RunToEndOr(20000);
             display.Flush();
 
             var output = display.GetOutput();

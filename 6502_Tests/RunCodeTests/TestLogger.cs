@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Abstractions;
+using Runtime;
 
 namespace RunCodeTests;
 
@@ -91,6 +92,6 @@ public class TestLogger : ILogger
     public void LogState(I6502_Sate newState)
     {
         _log.AppendLine();
-        _log.Append($"PC:${newState.ProgramCounter:X4} A:${newState.A:X2} X:${newState.X:X2} Y:${newState.Y:X2} C:{newState.C} Z:{newState.Z} N:{newState.N} I:{newState.I} D:{newState.D}");
+        _log.Append($"PC:${newState.ProgramCounter:X4} A:${newState.A:X2} X:${newState.X:X2} Y:${newState.Y:X2} flags:[${newState.ReadStateRegister(newState.B):X2}] C:{newState.C} Z:{newState.Z} I:{newState.I} D:{newState.D} B:{newState.B} V:{newState.V} N:{newState.N}");
     }
 }

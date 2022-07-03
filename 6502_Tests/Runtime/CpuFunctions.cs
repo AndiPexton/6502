@@ -390,10 +390,11 @@ public static class CpuFunctions
         (processorState, var l) = processorState.PullFromStack();
        
         var returnAddress = BitConverter.ToUInt16(new byte[] { h, l });
-        return processorState.MergeWith(new
+        var processRti = processorState.MergeWith(new
         {
             ProgramCounter = returnAddress
-        });
+        }).WriteStateRegister(sr);
+        return processRti;
     }
 
     private static I6502_Sate Process_BRK(I6502_Sate processorState)

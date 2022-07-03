@@ -21,8 +21,6 @@ public static class TransferOpCodeProcessors
         var value = processorState.X;
         return processorState.MergeWith(new
         {
-            Z = value == 0,
-            N = value.IsNegative(),
             S = value
         });
     }
