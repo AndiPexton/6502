@@ -1,13 +1,13 @@
 using Abstractions;
 using Dependency;
 
-namespace Runtime;
+namespace Runtime.Internal;
 
-public static class AddressingModeFunctions
+internal static class AddressingModeFunctions
 {
 
     private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
-    public static (ushort,I6502_Sate) ReadAddressAndIncrementProgramCounter(I6502_Sate processorState, string[] addressMode) =>
+    public static (ushort,I6502_Sate) ReadAddressAndIncrementProgramCounter(this I6502_Sate processorState, string[] addressMode) =>
         addressMode[0].ToLower() switch
         {
             "immediate" => ResolveImmediateAddressing(processorState),

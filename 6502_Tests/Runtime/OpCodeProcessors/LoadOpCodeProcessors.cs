@@ -1,10 +1,11 @@
 using Abstractions;
 using Dependency;
+using Runtime.Internal;
 using Shadow.Quack;
 
-namespace Runtime;
+namespace Runtime.OpCodeProcessors;
 
-public static class LoadOpCodeProcessors
+internal static class LoadOpCodeProcessors
 {
     private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
 

@@ -34,7 +34,7 @@ namespace AppleOne
 
         private static I6502_Sate RunToEnd()
         {
-            var newState = CpuFunctions.Empty6502ProcessorState();
+            var newState = _6502cpu.Empty6502ProcessorState();
             var run = true;
             while (run)
             {

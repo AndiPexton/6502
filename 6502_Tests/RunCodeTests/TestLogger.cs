@@ -48,25 +48,6 @@ public class TestLogger : ILogger
         _log.Append($"  S = ${s:X2}");
     }
 
-    public void LogValueAtAddress(byte b)
-    {
-        _log.Append($" [${b:X2}]");
-        _log.Append($" ({b})");
-
-        if (b == 155) return;
-        b = (byte)(b & 0b01111111);
-
-        if (b == 13)
-        {
-            _log.Append(" \"\\n\"");
-        }
-        else
-        {
-            var format = Encoding.ASCII.GetString(new[] { b });
-            _log.Append($" \"{format}\"");
-        }
-    }
-
     public void LogRead(ushort address, byte value)
     {
         _log.AppendLine();

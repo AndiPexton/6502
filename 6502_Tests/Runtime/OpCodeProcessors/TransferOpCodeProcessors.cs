@@ -1,9 +1,10 @@
 using Abstractions;
+using Runtime.Internal;
 using Shadow.Quack;
 
-namespace Runtime;
+namespace Runtime.OpCodeProcessors;
 
-public static class TransferOpCodeProcessors
+internal static class TransferOpCodeProcessors
 {
     public static I6502_Sate Process_TYA(this I6502_Sate processorState)
     {

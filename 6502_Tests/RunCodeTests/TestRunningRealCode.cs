@@ -26,8 +26,8 @@ namespace RunCodeTests
         private const ushort BasicRom = 0xE000;
         private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
 
-     
-        public void RunCode()
+        [Fact]
+        public void Acorn_BBC_OSROM()
         {
             Shelf.Clear();
             // 16-bit reset vector at $FFFC (LB-HB)
@@ -36,14 +36,21 @@ namespace RunCodeTests
             IAddressSpace AddressSpace = new AddressSpace();
             AddressSpace.SetResetVector(0xd9cd);
             Shelf.ShelveInstance<IAddressSpace>(AddressSpace);
-          //  Shelf.ShelveInstance<ILogger>(new TestLogger());
+           
             var osRom = File.ReadAllBytes("D:\\Examples\\Emulator\\6502_Tests\\RunCodeTests\\Os12.rom");
 
             Address.WriteAt(OSRom, osRom);
 
             Address.RegisterOverlay(new Mode7Screen(_testOutputHelper));
             Address.RegisterOverlay(new _6522_VIA_SYSTEM_VIA23());
+            var logger = new TestLogger();
+            Shelf.ShelveInstance<ILogger>(logger);
+
             var state = RunToEndOr(100000);
+
+            File.WriteAllText("D:\\Examples\\BBC.log", logger.GetLog());
+            File.WriteAllBytes("D:\\Examples\\BBC.dump", Address.Read(0, 0xFFFF));
+            
 
         }
 
@@ -73,7 +80,7 @@ namespace RunCodeTests
             keyboard.Type("E000R");
             keyboard.Type("PRINT \"HELLO\"");
 
-            var state = RunToEndOr(10000);
+            RunToEndOr(10000);
             display.Flush();
 
             var output = display.GetOutput();
@@ -115,7 +122,7 @@ namespace RunCodeTests
 
         private static I6502_Sate RunToEndOr(int limit)
         {
-            var newState = CpuFunctions.Empty6502ProcessorState();
+            var newState = _6502cpu.Empty6502ProcessorState();
             var run = true;
             var instructions = 0;
             ushort lastPc;

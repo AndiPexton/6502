@@ -35,7 +35,7 @@ namespace _6502_Tests
             Shelf.Clear();
 
             var newState = RunToEnd();
-            newState.ProgramCounter.Should().Be(CpuFunctions.EndOfAddress);
+            newState.ProgramCounter.Should().Be(_6502cpu.EndOfAddress);
         }
 
         [Fact]
@@ -375,7 +375,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(2);
-            newState.ReadCarryFlag().Should().Be(0);
+            newState.C.Should().BeTrue();
         }
 
         [Fact]
@@ -397,7 +397,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0);
-            newState.ReadCarryFlag().Should().Be(1);
+            newState.C.Should().BeTrue();
         }
 
 
@@ -444,7 +444,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0);
-            newState.ReadCarryFlag().Should().Be(1);
+            newState.C.Should().BeTrue();
         }
 
         [Fact]
@@ -468,7 +468,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0xFE);
-            newState.ReadCarryFlag().Should().Be(0);
+            newState.C.Should().BeTrue();
         }
 
         [Fact]
@@ -492,7 +492,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(3);
-            newState.ReadCarryFlag().Should().Be(0);
+            newState.C.Should().BeTrue();
         }
 
         [Fact]
@@ -517,12 +517,12 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(2);
-            newState.ReadCarryFlag().Should().Be(0);
+            newState.C.Should().BeTrue();
         }
 
         private static I6502_Sate RunToEnd()
         {
-            var newState = CpuFunctions.Empty6502ProcessorState();
+            var newState = _6502cpu.Empty6502ProcessorState();
             var run = true;
             while (run)
             {

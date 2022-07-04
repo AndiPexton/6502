@@ -1,9 +1,10 @@
 using Abstractions;
+using Runtime.Internal;
 using Shadow.Quack;
 
-namespace Runtime;
+namespace Runtime.OpCodeProcessors;
 
-public static class StackOpCodeProcessors
+internal static class StackOpCodeProcessors
 {
     public static I6502_Sate Process_PHP(this I6502_Sate processorState)
     {

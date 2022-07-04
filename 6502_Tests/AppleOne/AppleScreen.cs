@@ -11,7 +11,7 @@ public class AppleScreen : IOverLay
         Start = 0xD012;
         End = 0xD012;
         Console.CursorVisible = true;
-        Console.CursorSize = 10;
+        Console.CursorSize = 1;
     }
 
     public int Start { get; }
@@ -33,7 +33,6 @@ public class AppleScreen : IOverLay
         }
     }
     
-
     public byte Read(ushort address)
     {
         return 0;

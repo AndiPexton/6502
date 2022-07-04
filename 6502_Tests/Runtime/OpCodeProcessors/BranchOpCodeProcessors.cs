@@ -1,9 +1,9 @@
 using Abstractions;
 using Shadow.Quack;
 
-namespace Runtime;
+namespace Runtime.OpCodeProcessors;
 
-public static class BranchOpCodeProcessors
+internal static class BranchOpCodeProcessors
 {
     public static I6502_Sate Process_BPL(this I6502_Sate processorState, ushort address) =>
         !processorState.N

@@ -1,9 +1,9 @@
 using Abstractions;
 using Shadow.Quack;
 
-namespace Runtime;
+namespace Runtime.OpCodeProcessors;
 
-public static class FlagOpCodeProcessors
+internal static class FlagOpCodeProcessors
 {
 
     public static I6502_Sate Process_CLC(this I6502_Sate processorState) => 

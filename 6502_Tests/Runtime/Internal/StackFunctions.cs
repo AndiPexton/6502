@@ -2,9 +2,9 @@ using Abstractions;
 using Dependency;
 using Shadow.Quack;
 
-namespace Runtime;
+namespace Runtime.Internal;
 
-public static class StackFunctions
+internal static class StackFunctions
 {
     private static ILogger Logger => Shelf.RetrieveInstance<ILogger>();
 

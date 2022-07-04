@@ -1,9 +1,9 @@
 using Abstractions;
 using Dependency;
 
-namespace Runtime;
+namespace Runtime.OpCodeProcessors;
 
-public static class StoreOpCodeProcessors
+internal static class StoreOpCodeProcessors
 {
     private static IAddressSpace Address => Shelf.RetrieveInstance<IAddressSpace>();
 
