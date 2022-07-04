@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.ComponentModel.Design;
+﻿using System.ComponentModel.Design;
 using Abstractions;
 using Dependency;
 using Runtime;
@@ -16,10 +14,9 @@ namespace AppleOne
         {
             Shelf.Clear();
 
+            IAddressSpace addressSpace = new AddressSpace();
 
-            IAddressSpace AddressSpace = new AddressSpace();
-
-            Shelf.ShelveInstance<IAddressSpace>(AddressSpace);
+            Shelf.ShelveInstance<IAddressSpace>(addressSpace);
 
             var appleRom = File.ReadAllBytes("D:\\Examples\\Emulator\\6502_Tests\\RunCodeTests\\apple1.rom");
             var basicRom = File.ReadAllBytes("D:\\Examples\\Emulator\\6502_Tests\\RunCodeTests\\basic.rom");
@@ -29,13 +26,14 @@ namespace AppleOne
 
             Address.RegisterOverlay(new AppleScreen());
             Address.RegisterOverlay(new Keyboard());
-            var state = RunToEnd();
+            RunToEnd();
         }
 
         private static I6502_Sate RunToEnd()
         {
             var newState = _6502cpu.Empty6502ProcessorState();
             var run = true;
+
             while (run)
             {
                 try
@@ -46,11 +44,9 @@ namespace AppleOne
                 {
                     run = false;
                 }
-                //hread.Sleep(TimeSpan.FromMilliseconds(1));
             }
 
             return newState;
         }
-
     }
 }

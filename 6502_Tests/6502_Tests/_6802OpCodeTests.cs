@@ -375,7 +375,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(2);
-            newState.C.Should().BeTrue();
+            newState.C.Should().BeFalse();
         }
 
         [Fact]
@@ -468,7 +468,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(0xFE);
-            newState.C.Should().BeTrue();
+            newState.C.Should().BeFalse();
         }
 
         [Fact]
@@ -492,7 +492,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(3);
-            newState.C.Should().BeTrue();
+            newState.C.Should().BeFalse();
         }
 
         [Fact]
@@ -517,7 +517,7 @@ namespace _6502_Tests
             var newState = RunToEnd();
 
             newState.A.Should().Be(2);
-            newState.C.Should().BeTrue();
+            newState.C.Should().BeFalse();
         }
 
         private static I6502_Sate RunToEnd()
