@@ -20,9 +20,10 @@ namespace AppleOne
 
             var appleRom = File.ReadAllBytes("D:\\Examples\\Emulator\\6502_Tests\\RunCodeTests\\apple1.rom");
             var basicRom = File.ReadAllBytes("D:\\Examples\\Emulator\\6502_Tests\\RunCodeTests\\basic.rom");
-
+            var apple30 = File.ReadAllBytes("D:\\Examples\\30th.rom");
             Address.WriteAt(AppleRom, appleRom);
             Address.WriteAt(BasicRom, basicRom);
+            Address.WriteAt(0x0280, apple30);
 
             Address.RegisterOverlay(new AppleScreen());
             Address.RegisterOverlay(new Keyboard());

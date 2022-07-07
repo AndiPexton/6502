@@ -30,13 +30,13 @@ public class AppleScreen : IOverLay
             if (b == 0)
             {
                 Console.Clear();
-                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.BackgroundColor = ConsoleColor.Black;
             }
             if (b == 1)
             {
                 Console.Clear();
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.BackgroundColor = ConsoleColor.Black;
             }
         }
@@ -66,6 +66,12 @@ public class AppleScreen : IOverLay
             Console.CursorLeft = b;
         if (address == cursorY)
             Console.CursorTop = b;
+
+        if (Console.CursorLeft >= 40)
+        {
+            Console.CursorLeft = 0;
+            Console.WriteLine();
+        }
     }
 
     public byte Read(ushort address)
